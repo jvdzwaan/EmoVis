@@ -1,0 +1,9 @@
+{% if corpus %}
+    <ul>
+        {% for play in corpus %}
+        <li>{{ play.jaar }}: {{ play.titel }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No plays in corpus.</p>
+{% endif %}
