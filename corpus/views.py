@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from models import Titel, Auteur, Titelxauteur
 
@@ -70,3 +70,8 @@ def index(request):
     context = {'corpus': corpus}
 
     return render(request, 'corpus/plays.html', context)
+
+def show_title(request, title_id):
+    title = get_object_or_404(Titel, pk=title_id)
+
+    return render(request, 'corpus/title.html', {'title': title})

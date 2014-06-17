@@ -1,0 +1,22 @@
+<h1>{{ title.titel }}</h1>
+<p>Door:
+    {% for author in title.auteurs.all %}
+        {{ author.voornaam }} {{ author.achternaam }} </br>
+    {% endfor %}
+</p>
+
+<p>Jaar: {{ title.jaar }}</p>
+
+<p>
+    Genre:
+    {% for genre in title.genres.all %}
+        {{ genre.genre }} </br>
+    {% endfor %}
+</p>
+
+<p>
+    Subgenre:
+    {% for subgenre in title.subgenres.all %}
+        {{ subgenre.subgenre }} </br>
+    {% endfor %}
+</p>
