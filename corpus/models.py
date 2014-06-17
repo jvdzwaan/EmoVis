@@ -175,6 +175,8 @@ class Subgenre(models.Model):
 class Titel(models.Model):
     ti_id = models.CharField(primary_key=True, max_length=14)
     auteurs = models.ManyToManyField(Auteur, through='Titelxauteur')
+    genres = models.ManyToManyField(Genre, through='Titelxgenre')
+    subgenres = models.ManyToManyField(Subgenre, through='Titelxsubgenre')
     pers_id_bk = models.CharField(max_length=7, blank=True)
     koepel_id = models.CharField(max_length=14, blank=True)
     kop_borkv_bk = models.TextField(blank=True)
@@ -255,8 +257,8 @@ class Titelxediteur(models.Model):
 
 class Titelxgenre(models.Model):
     id = models.CharField(primary_key=True, max_length=5)
-    ti_id = models.CharField(max_length=14, blank=True)
-    genre_id = models.CharField(max_length=2, blank=True)
+    ti_id = models.ForeignKey(Titel, db_column='ti_id')
+    genre_id = models.ForeignKey(Genre, db_column='genre_id')
     class Meta:
         managed = False
         db_table = 'titelxgenre'
@@ -271,8 +273,8 @@ class Titelxillustrator(models.Model):
 
 class Titelxsubgenre(models.Model):
     id = models.CharField(primary_key=True, max_length=5)
-    ti_id = models.CharField(max_length=14, blank=True)
-    subgenre_id = models.CharField(max_length=3, blank=True)
+    ti_id = models.ForeignKey(Titel, db_column='ti_id')
+    subgenre_id = models.ForeignKey(Subgenre, db_column='subgenre_id')
     class Meta:
         managed = False
         db_table = 'titelxsubgenre'
