@@ -1,7 +1,8 @@
 {% if corpus %}
     <ul>
         {% for play in corpus %}
-        <li>{{ play.jaar }}: {{ play.titel }} - 
+        <li>{{ play.jaar }}: 
+            <a href="title/{{ play.ti_id }}">{{ play.titel }}</a> - 
         {% for auteur in play.auteurs.all %}
             {{ auteur.voornaam }} {{ auteur.achternaam }}
         {% endfor %}
