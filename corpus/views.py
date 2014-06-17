@@ -75,3 +75,9 @@ def show_title(request, title_id):
     title = get_object_or_404(Titel, pk=title_id)
 
     return render(request, 'corpus/title.html', {'title': title})
+
+
+def show_author(request, author_id):
+    author = get_object_or_404(Auteur, pk=author_id)
+
+    return render(request, 'corpus/author.html', {'author': author})

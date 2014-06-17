@@ -3,9 +3,10 @@
         {% for play in corpus %}
         <li>{{ play.jaar }}: 
             <a href="title/{{ play.ti_id }}">{{ play.titel }}</a> - 
-        {% for auteur in play.auteurs.all %}
-            {{ auteur.voornaam }} {{ auteur.achternaam }}
-        {% endfor %}
+            {% for auteur in play.auteurs.all %}
+                <a href="author/{{ auteur.pers_id }}">{{ auteur.voornaam }} 
+                    {{ auteur.achternaam }}</a> 
+            {% endfor %}
         </li>
         {% endfor %}
     </ul>

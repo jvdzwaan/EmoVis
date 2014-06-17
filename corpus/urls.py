@@ -4,5 +4,6 @@ from corpus import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    url(r'^title/(?P<title_id>\w+)/$', views.show_title, name='get_title')
+    url(r'^title/(?P<title_id>\w+)/$', views.show_title, name='get_title'),
+    url(r'^author/(?P<author_id>\w+)/$', views.show_author, name='show_author')
 )
