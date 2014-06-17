@@ -174,6 +174,7 @@ class Subgenre(models.Model):
 
 class Titel(models.Model):
     ti_id = models.CharField(primary_key=True, max_length=14)
+    auteurs = models.ManyToManyField(Auteur, through='Titelxauteur')
     pers_id_bk = models.CharField(max_length=7, blank=True)
     koepel_id = models.CharField(max_length=14, blank=True)
     kop_borkv_bk = models.TextField(blank=True)
@@ -238,8 +239,8 @@ class TitelCat(models.Model):
 
 class Titelxauteur(models.Model):
     id = models.CharField(primary_key=True, max_length=7)
-    ti_id = models.CharField(max_length=14, blank=True)
-    pers_id = models.CharField(max_length=7, blank=True)
+    ti_id = models.ForeignKey(Titel, db_column='ti_id')
+    pers_id = models.ForeignKey(Auteur, db_column='pers_id')
     class Meta:
         managed = False
         db_table = 'titelxauteur'

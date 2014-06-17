@@ -1,10 +1,10 @@
 {% if corpus %}
     <ul>
         {% for play in corpus %}
-        <li>{{ play.jaar }}: {{ play.titel }} 
-            {% for author in play.auteurs %}
-                - {{ author.auteur_voornaam }} {{ author.auteur_achternaam }}
-            {% endfor %}
+        <li>{{ play.jaar }}: {{ play.titel }} - 
+        {% for auteur in play.auteurs.all %}
+            {{ auteur.voornaam }} {{ auteur.achternaam }}
+        {% endfor %}
         </li>
         {% endfor %}
     </ul>

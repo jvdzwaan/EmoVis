@@ -65,27 +65,8 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
 
 
 def index(request):
-    results = []
-
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel')
-    for play in corpus:
-        result = {}
-        result['id'] = play.ti_id
-        result['titel'] = play.titel
-        result['jaar'] = play.jaar
 
-        result['auteurs'] = [] 
-        authors = Titelxauteur.objects.filter(ti_id=play.ti_id)
-        for author in authors:
-            author_name = Auteur.objects.get(pk=author.pers_id)
-            author_details = {'auteur_id': author.pers_id,
-                              'auteur_voornaam': author_name.voornaam,
-                              'auteur_achternaam': author_name.achternaam
-                             }
-            result['auteurs'].append(author_details)
-
-        results.append(result)
-
-    context = {'corpus': results}
+    context = {'corpus': corpus}
 
     return render(request, 'corpus/plays.html', context)
