@@ -1,5 +1,5 @@
 import operator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
 from models import Titel, Auteur, Titelxauteur, Genre
@@ -108,4 +108,15 @@ def show_year(request, year):
                'year': year
               }
 
-    return render(request, 'corpus/year.html', context)    
+    return render(request, 'corpus/year.html', context)
+
+
+def show_genres(request):
+    genres = Genre.objects.filter(titel__in=_corpus_ids) \
+                  .annotate(num_titles=Count('titel'))
+    total_titles = Titel.objects.filter(ti_id__in=_corpus_ids).count()
+
+    context = {'genres': genres,
+               'total_titles': total_titles}
+
+    return render(request, 'corpus/genres.html', context)
