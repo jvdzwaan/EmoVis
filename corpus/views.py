@@ -1,6 +1,8 @@
+import operator
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 
-from models import Titel, Auteur, Titelxauteur
+from models import Titel, Auteur, Titelxauteur, Genre
 
 _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01', 
     'bild002dich04', 'hoof001thes01', 'hare003agon01', 'asse001kwak01', 
@@ -81,3 +83,12 @@ def show_author(request, author_id):
     author = get_object_or_404(Auteur, pk=author_id)
 
     return render(request, 'corpus/author.html', {'author': author})
+
+
+def show_all_plays(request):
+    genre_drama = Genre.objects.get(genre='Drama').titel_set
+    years = [str(jaar) for jaar in range(1600, 1831)]
+    select_years = reduce(operator.or_, (Q(jaar__contains=y) for y in years))
+    corpus=genre_drama.filter(select_years).order_by('jaar')
+
+    return render(request, 'corpus/plays.html', {'corpus': corpus})
