@@ -69,7 +69,9 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
 def index(request):
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel')
 
-    context = {'corpus': corpus}
+    context = {'corpus': corpus,
+               'page_title': 'Corpus'
+              }
 
     return render(request, 'corpus/plays.html', context)
 
@@ -91,4 +93,8 @@ def show_all_plays(request):
     select_years = reduce(operator.or_, (Q(jaar__contains=y) for y in years))
     corpus=genre_drama.filter(select_years).order_by('jaar')
 
-    return render(request, 'corpus/plays.html', {'corpus': corpus})
+    context = {'corpus': corpus,
+               'page_title': 'Lijst werken met genre drama 1600-1830'
+              }
+    
+    return render(request, 'corpus/plays.html', context)
