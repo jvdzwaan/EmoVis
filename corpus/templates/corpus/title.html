@@ -5,7 +5,14 @@
     {% endfor %}
 </p>
 
-<p>Jaar: {{ title.jaar }}</p>
+<p>Jaar: 
+    {% if title.jaar|length == 4 %}
+        <a href="{% url 'corpus.views.show_year' year=title.jaar %}">
+            {{ title.jaar }}</a>
+        {% else %}
+            {{ title.jaar }}
+        {% endif %}
+</p>
 
 <p>
     Genre:

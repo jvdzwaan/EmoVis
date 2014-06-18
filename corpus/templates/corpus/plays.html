@@ -2,7 +2,14 @@
 {% if corpus %}
     <ul>
         {% for play in corpus %}
-        <li>{{ play.jaar }}: 
+        <li>
+            {% if play.jaar|length == 4 %}
+                <a href="{% url 'corpus.views.show_year' year=play.jaar %}">
+                    {{ play.jaar }}</a>:
+            {% else %}
+                {{ play.jaar }}:
+            {% endif %}
+
             <a href="{% url 'corpus.views.show_title' title_id=play.ti_id %}">
                 {{ play.titel }}
             </a> - 
