@@ -98,3 +98,14 @@ def show_all_plays(request):
               }
     
     return render(request, 'corpus/plays.html', context)
+
+
+def show_year(request, year):
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids) \
+                  .filter(jaar__contains=year).order_by('titel')
+
+    context = {'corpus': corpus,
+               'year': year
+              }
+
+    return render(request, 'corpus/year.html', context)    
