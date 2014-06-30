@@ -2,7 +2,7 @@ import operator
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
-from models import Titel, Auteur, Titelxauteur, Genre
+from models import Titel, Auteur, Titelxauteur, Genre, Subgenre
 
 _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01', 
     'bild002dich04', 'hoof001thes01', 'hare003agon01', 'asse001kwak01', 
@@ -126,10 +126,15 @@ def show_year(request, year):
 def show_genres(request):
     genres = Genre.objects.filter(titel__in=_corpus_ids) \
                   .annotate(num_titles=Count('titel'))
+    subgenres = Subgenre.objects.filter(titel__in=_corpus_ids) \
+                        .annotate(num_titles=Count('titel'))
     total_titles = Titel.objects.filter(ti_id__in=_corpus_ids).count()
 
-    context = {'genres': genres,
-               'total_titles': total_titles}
+    context = {
+        'genres': genres,
+        'subgenres': subgenres,
+        'total_titles': total_titles
+    }
 
     return render(request, 'corpus/genres.html', context)
 

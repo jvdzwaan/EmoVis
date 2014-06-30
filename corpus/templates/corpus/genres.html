@@ -1,6 +1,7 @@
 {% load corpus_extras %}
 <h1>Genres in het corpus</h1>
-<p>Totaal in corpus: {{ total_titles }} titels.</p> 
+<p>Totaal in corpus: {{ total_titles }} titels.</p>
+<h2>Genres</h2>
 {% if genres %}
     <ul>
         {% for genre in genres %}
@@ -13,3 +14,17 @@
 {% else %}
     <p>Geen genres gevonden.</p>
 {% endif %}
+<h2>Subgenres</h2>
+{% if subgenres %}
+    <ul>
+        {% for genre in subgenres %}
+            <li>
+                {{ genre.subgenre }}:
+                {{ genre.num_titles }} titels
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Geen subgenres gevonden.</p>
+{% endif %}
+
