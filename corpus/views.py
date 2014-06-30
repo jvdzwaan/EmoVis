@@ -150,3 +150,17 @@ def show_genre(request, genre_id):
     }
     
     return render(request, 'corpus/plays.html', context)
+
+
+def show_subgenre(request, genre_id):
+    subgenre = get_object_or_404(Subgenre, pk=genre_id)
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids) \
+                  .filter(subgenres__subgenre_id=genre_id) 
+
+    context = {
+        'corpus': corpus,
+        'page_title': 'Toneelstukken met subgenre {g}'\
+                      .format(g=subgenre.subgenre)               
+    }
+    
+    return render(request, 'corpus/plays.html', context)
