@@ -1,12 +1,10 @@
+{% load corpus_extras %}
 <h1>Toneelstukken uit {{ year }}</h1>
 
 {% if corpus %}
     <ul>
         {% for title in corpus %}
-            <li>
-                <a href="{% url 'corpus.views.show_title' title_id=title.ti_id %}">
-                {{ title.titel }}</a> ({{ title.jaar }})
-            </li>
+            <li> {% title_link title %} </li>
         {% endfor %}
     </ul>
 {% else %}

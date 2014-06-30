@@ -7,8 +7,7 @@
     <ul>
         {% for title in author.titel_set.all %}
         <li>
-            <a href="{% url 'corpus.views.show_title' title_id=title.ti_id %}">
-            {{ title.titel }}</a> - 
+            {% title_link title %} -
             {% year_link title.jaar %}    
         </li>
         {% endfor %}

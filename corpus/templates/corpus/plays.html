@@ -5,9 +5,7 @@
         {% for play in corpus %}
         <li>
             {% year_link play.jaar %} - 
-            <a href="{% url 'corpus.views.show_title' title_id=play.ti_id %}">
-                {{ play.titel }}
-            </a> - 
+            {% title_link play %} - 
             {% for auteur in play.auteurs.all %}
                 <a href="{% url 'corpus.views.show_author' author_id=auteur.pers_id %}">
                         {{ auteur.voornaam }} {{ auteur.achternaam }}
