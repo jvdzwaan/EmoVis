@@ -31,3 +31,11 @@ def genre_link(genre):
         'genre_id': genre.genre_id,
         'genre': unicode(genre.genre)
     }
+
+
+@register.inclusion_tag('subgenre_link.html')
+def subgenre_link(genre):
+    return {
+        'genre_id': genre.subgenre_id,
+        'genre': unicode(genre.subgenre)
+    }

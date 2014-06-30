@@ -19,6 +19,6 @@
 <p>
     Subgenre:
     {% for subgenre in title.subgenres.all %}
-        {{ subgenre.subgenre }} </br>
+        {% subgenre_link subgenre %} </br>
     {% endfor %}
 </p>

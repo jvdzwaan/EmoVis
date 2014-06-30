@@ -19,7 +19,7 @@
     <ul>
         {% for genre in subgenres %}
             <li>
-                {{ genre.subgenre }}:
+                {% subgenre_link genre %}:
                 {{ genre.num_titles }} titels
             </li>
         {% endfor %}
