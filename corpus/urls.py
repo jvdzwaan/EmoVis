@@ -7,6 +7,7 @@ urlpatterns = patterns('',
     url(r'^title/(?P<title_id>\w+)/$', views.show_title, name='get_title'),
     url(r'^author/(?P<author_id>\w+)/$', views.show_author, name='show_author'),
     url(r'^all_plays/$', views.show_all_plays, name='show_all_plays'),
+    url(r'^trial_annotations/$', views.show_trial_annotations),
     url(r'^year/(?P<year>\w+)/$', views.show_year, name='show_year'),
     url(r'^genres/$', views.show_genres, name='show_genres'),
 )

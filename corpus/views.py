@@ -65,6 +65,7 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
     'bran002vein02', 'vond001dewe03', 'hoof001gran01', 'bred001ange01', 
     'tijs003wind01', 'stey002geve01', 'zasy001borg01', '_vla008vlae01'] 
 
+_trial_annotation_ids = ['feit007patr01', 'hoof002door01', 'vos_002mede03']
 
 def index(request):
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel')
@@ -97,6 +98,17 @@ def show_all_plays(request):
                'page_title': 'Lijst werken met genre drama 1600-1830'
               }
     
+    return render(request, 'corpus/plays.html', context)
+
+
+def show_trial_annotations(request):
+    corpus = Titel.objects.filter(ti_id__in=_trial_annotation_ids). \
+        order_by('titel')
+
+    context = {'corpus': corpus,
+               'page_title': 'Proefannotaties'
+              }
+
     return render(request, 'corpus/plays.html', context)
 
 
