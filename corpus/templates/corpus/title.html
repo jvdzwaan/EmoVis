@@ -12,7 +12,7 @@
 <p>
     Genre:
     {% for genre in title.genres.all %}
-        {{ genre.genre }} </br>
+        {% genre_link genre %} </br>
     {% endfor %}
 </p>
 

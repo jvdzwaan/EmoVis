@@ -23,3 +23,11 @@ def author_link(author):
         'a_id': author.pers_id,
         'author': unicode(author.voornaam) + " " + unicode(author.achternaam)
     }
+
+
+@register.inclusion_tag('genre_link.html')
+def genre_link(genre):
+    return {
+        'genre_id': genre.genre_id,
+        'genre': unicode(genre.genre)
+    }
