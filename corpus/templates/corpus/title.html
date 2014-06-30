@@ -1,3 +1,4 @@
+{% load corpus_extras %}
 <h1>{{ title.titel }}</h1>
 <p>Door:
     {% for author in title.auteurs.all %}
@@ -5,13 +6,7 @@
     {% endfor %}
 </p>
 
-<p>Jaar: 
-    {% if title.jaar|length == 4 %}
-        <a href="{% url 'corpus.views.show_year' year=title.jaar %}">
-            {{ title.jaar }}</a>
-        {% else %}
-            {{ title.jaar }}
-        {% endif %}
+<p>Jaar: {% year_link title.jaar %} 
 </p>
 
 <p>
