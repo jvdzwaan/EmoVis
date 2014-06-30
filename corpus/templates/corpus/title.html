@@ -2,7 +2,7 @@
 <h1>{{ title.titel }}</h1>
 <p>Door:
     {% for author in title.auteurs.all %}
-        {{ author.voornaam }} {{ author.achternaam }} </br>
+        {% author_link author %} </br>
     {% endfor %}
 </p>
 
