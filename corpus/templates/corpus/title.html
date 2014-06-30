@@ -1,0 +1,24 @@
+{% load corpus_extras %}
+<h1>{{ title.titel }}</h1>
+<p>Door:
+    {% for author in title.auteurs.all %}
+        {% author_link author %} </br>
+    {% endfor %}
+</p>
+
+<p>Jaar: {% year_link title.jaar %} 
+</p>
+
+<p>
+    Genre:
+    {% for genre in title.genres.all %}
+        {% genre_link genre %} </br>
+    {% endfor %}
+</p>
+
+<p>
+    Subgenre:
+    {% for subgenre in title.subgenres.all %}
+        {% subgenre_link subgenre %} </br>
+    {% endfor %}
+</p>

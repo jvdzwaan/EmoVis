@@ -1,0 +1,15 @@
+{% load corpus_extras %}
+<h1>{{ author.voornaam }} {{ author.achternaam }}</h1>
+
+<p>Geboren: {{ author.geb_datum }} {{ author.jaar_geboren }}</p>
+<p>Overleden: {{ author.overl_datum }} {{ author.jaar_overlijden }}</p>
+<p>Titels
+    <ul>
+        {% for title in author.titel_set.all %}
+        <li>
+            {% title_link title %} -
+            {% year_link title.jaar %}    
+        </li>
+        {% endfor %}
+    </ul>
+</p>
