@@ -132,3 +132,15 @@ def show_genres(request):
                'total_titles': total_titles}
 
     return render(request, 'corpus/genres.html', context)
+
+
+def show_genre(request, genre):
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids) \
+                  .filter(genres__genre=genre) 
+
+    context = {
+        'corpus': corpus,
+        'page_title': 'Toneelstukken met genre {genre}'.format(genre=genre)               
+    }
+    
+    return render(request, 'corpus/plays.html', context)
