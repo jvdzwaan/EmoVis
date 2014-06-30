@@ -3,27 +3,27 @@
 <p>Totaal in corpus: {{ total_titles }} titels.</p>
 <h2>Genres</h2>
 {% if genres %}
-    <ul>
+    <ol>
         {% for genre in genres %}
             <li>
                 {% genre_link genre %}:
                 {{ genre.num_titles }} titels
             </li>
         {% endfor %}
-    </ul>
+    </ol>
 {% else %}
     <p>Geen genres gevonden.</p>
 {% endif %}
 <h2>Subgenres</h2>
 {% if subgenres %}
-    <ul>
+    <ol>
         {% for genre in subgenres %}
             <li>
                 {% subgenre_link genre %}:
                 {{ genre.num_titles }} titels
             </li>
         {% endfor %}
-    </ul>
+    </ol>
 {% else %}
     <p>Geen subgenres gevonden.</p>
 {% endif %}

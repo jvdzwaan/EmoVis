@@ -125,9 +125,11 @@ def show_year(request, year):
 
 def show_genres(request):
     genres = Genre.objects.filter(titel__in=_corpus_ids) \
-                  .annotate(num_titles=Count('titel'))
+                  .annotate(num_titles=Count('titel')) \
+                  .order_by('-num_titles')
     subgenres = Subgenre.objects.filter(titel__in=_corpus_ids) \
-                        .annotate(num_titles=Count('titel'))
+                        .annotate(num_titles=Count('titel')) \
+                        .order_by('-num_titles')
     total_titles = Titel.objects.filter(ti_id__in=_corpus_ids).count()
 
     context = {
@@ -155,7 +157,7 @@ def show_genre(request, genre_id):
 def show_subgenre(request, genre_id):
     subgenre = get_object_or_404(Subgenre, pk=genre_id)
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids) \
-                  .filter(subgenres__subgenre_id=genre_id) 
+                  .filter(subgenres__subgenre_id=genre_id)
 
     context = {
         'corpus': corpus,
