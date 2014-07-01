@@ -1,0 +1,10 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <script type="text/javascript" src="{% static 'js/d3js/d3.min.js'%}" charset="utf-8"></script> 
+    </head>
+    <body>
+            {% block content %}{% endblock %}
+    </body>
+</html>

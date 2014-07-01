@@ -1,4 +1,10 @@
+{% extends "base.html" %}
+{% load staticfiles %}
 {% load corpus_extras %}
+
+{% block title %}Embodied emotions: genres{% endblock %}
+
+{% block content %}
 <h1>Genres in het corpus</h1>
 <p>Totaal in corpus: {{ total_titles }} titels.</p>
 <h2>Genres</h2>
@@ -27,4 +33,4 @@
 {% else %}
     <p>Geen subgenres gevonden.</p>
 {% endif %}
-
+{% endblock %}
