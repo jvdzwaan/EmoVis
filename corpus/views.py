@@ -137,6 +137,9 @@ def show_genres(request):
     genres_s = [genre.genre for genre in genres]
     genre_histogram = {} 
     
+    subgenres_s = [subg.subgenre for subg in subgenres if subg.num_titles > 4]
+    subgenre_histogram = {}
+
     year_start = 1600
     bin_size = 20
     for year in range(year_start, 2040, bin_size):
@@ -146,6 +149,11 @@ def show_genres(request):
         for g in genres_s:
             genre_histogram[n][g] = 0
         
+        subgenre_histogram[n] = {}
+        subgenre_histogram[n]['Jaar'] = year
+        for g in subgenres_s:
+            subgenre_histogram[n][g] = 0
+   
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids)
     for title in corpus:
         if len(title.jaar) == 4:
@@ -161,10 +169,15 @@ def show_genres(request):
         for genre in title.genres.all():
             genre_histogram[n][genre.genre] += 1
         
+        for subgenre in title.subgenres.all():
+            if subgenre.subgenre in subgenres_s:
+                subgenre_histogram[n][subgenre.subgenre] += 1
+
     context = {
         'genres': genres,
         'genre_histogram': json.dumps(genre_histogram.values()),
         'subgenres': subgenres,
+        'subgenre_histogram': json.dumps(subgenre_histogram.values()),
         'total_titles': total_titles
     }
 

@@ -39,4 +39,10 @@
 {% else %}
     <p>Geen subgenres gevonden.</p>
 {% endif %}
+<div class="subgenre_histogram"></div>
+<script type="text/javascript">
+     var json_plays = {{ subgenre_histogram|safe }};
+
+    stackedBarChart(json_plays, '.subgenre_histogram');
+</script>
 {% endblock %}
