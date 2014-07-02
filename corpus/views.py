@@ -1,4 +1,6 @@
 import operator
+import json
+import re
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
@@ -131,9 +133,37 @@ def show_genres(request):
                         .annotate(num_titles=Count('titel')) \
                         .order_by('-num_titles')
     total_titles = Titel.objects.filter(ti_id__in=_corpus_ids).count()
+  
+    genres_s = [genre.genre for genre in genres]
+    genre_histogram = {} 
+    
+    year_start = 1600
+    bin_size = 20
+    for year in range(year_start, 2040, bin_size):
+        n = (year-year_start)/bin_size
+        genre_histogram[n] = {}
+        genre_histogram[n]['Jaar'] = year
+        for g in genres_s:
+            genre_histogram[n][g] = 0
+        
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids)
+    for title in corpus:
+        if len(title.jaar) == 4:
+            t_year = int(title.jaar)
+        else:
+            match = re.search(r'\d\d\d\d', title.jaar)
+            if match:
+                t_year = int(match.group())
+            else:
+                t_year = 2022
 
+        n = (t_year-year_start)/bin_size
+        for genre in title.genres.all():
+            genre_histogram[n][genre.genre] += 1
+        
     context = {
         'genres': genres,
+        'genre_histogram': json.dumps(genre_histogram.values()),
         'subgenres': subgenres,
         'total_titles': total_titles
     }

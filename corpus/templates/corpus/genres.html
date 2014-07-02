@@ -20,14 +20,11 @@
 {% else %}
     <p>Geen genres gevonden.</p>
 {% endif %}
-<div class="histogram"></div>
+<div class="genre_histogram"></div>
 <script type="text/javascript">
-    var json_plays = [
-        {"Jaar": "1600", "Drama": "4", "Poezie": "1", "Proza": "0","Sec-letterkunde": "0", "Sec-taal/letterkunde": "0", "Non-fictie": "0"},
-        {"Jaar": "1620", "Drama": "5", "Poezie": "0", "Proza": "0","Sec-letterkunde": "0", "Sec-taal/letterkunde": "0", "Non-fictie": "0"},
-        {"Jaar": "1640", "Drama": "7", "Poezie": "1", "Proza": "0","Sec-letterkunde": "0", "Sec-taal/letterkunde": "0", "Non-fictie": "0"}];
+     var json_plays = {{ genre_histogram|safe }};
 
-    stackedBarChart(json_plays, '.histogram');
+    stackedBarChart(json_plays, '.genre_histogram');
 </script>
 <h2>Subgenres</h2>
 {% if subgenres %}
