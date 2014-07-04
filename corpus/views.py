@@ -70,7 +70,8 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
 _trial_annotation_ids = ['feit007patr01', 'hoof002door01', 'vos_002mede03']
 
 def index(request):
-    corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel')
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel') \
+                  .order_by('jaar')
 
     context = {'corpus': corpus,
                'page_title': 'Corpus'
