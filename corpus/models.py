@@ -58,8 +58,12 @@ class Auteur(models.Model):
     alias = models.TextField(blank=True)
     nlab = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'auteur'
+
+
+    def __unicode__(self):
+        return '{voornaam} {achternaam}'.format(voornaam=self.voornaam,
+                                                achternaam=self.achternaam)
 
 class Auteurxberoep(models.Model):
     pers_id = models.CharField(max_length=7, blank=True)
@@ -108,8 +112,11 @@ class Genre(models.Model):
     genre = models.TextField(blank=True)
     order = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'genre'
+
+
+    def __unicode__(self):
+        return self.genre
 
 class Landen(models.Model):
     land_id = models.CharField(primary_key=True, max_length=7)
@@ -169,8 +176,11 @@ class Subgenre(models.Model):
     subgenre_id = models.CharField(primary_key=True, max_length=5)
     order = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'subgenre'
+    
+    
+    def __unicode__(self):
+        return self.subgenre
 
 class Titel(models.Model):
     ti_id = models.CharField(primary_key=True, max_length=14)
@@ -222,8 +232,21 @@ class Titel(models.Model):
     literatuurplein_id = models.TextField(blank=True)
     limburgportaal = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'titel'
+    
+    
+    def __unicode__(self):
+        result = [self.titel]
+        for auteur in self.auteurs.all():
+            result.append('-')
+            result.append(auteur.voornaam)
+            result.append(auteur.achternaam)
+
+        result.append('(')
+        result.append(self.jaar)
+        result.append(')')
+        
+        return ' '.join(result)
 
 class TitelBevat(models.Model):
     ti_id = models.CharField(max_length=14, blank=True)

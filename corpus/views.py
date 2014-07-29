@@ -1,4 +1,6 @@
 import operator
+import json
+import re
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
@@ -68,7 +70,8 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
 _trial_annotation_ids = ['feit007patr01', 'hoof002door01', 'vos_002mede03']
 
 def index(request):
-    corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel')
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel') \
+                  .order_by('jaar')
 
     context = {'corpus': corpus,
                'page_title': 'Corpus'
@@ -131,10 +134,51 @@ def show_genres(request):
                         .annotate(num_titles=Count('titel')) \
                         .order_by('-num_titles')
     total_titles = Titel.objects.filter(ti_id__in=_corpus_ids).count()
+  
+    genres_s = [genre.genre for genre in genres]
+    genre_histogram = {} 
+    
+    subgenres_s = [subg.subgenre for subg in subgenres if subg.num_titles > 4]
+    subgenre_histogram = {}
+
+    year_start = 1600
+    bin_size = 20
+    for year in range(year_start, 2040, bin_size):
+        n = (year-year_start)/bin_size
+        genre_histogram[n] = {}
+        genre_histogram[n]['Jaar'] = year
+        for g in genres_s:
+            genre_histogram[n][g] = 0
+        
+        subgenre_histogram[n] = {}
+        subgenre_histogram[n]['Jaar'] = year
+        for g in subgenres_s:
+            subgenre_histogram[n][g] = 0
+   
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids)
+    for title in corpus:
+        if len(title.jaar) == 4:
+            t_year = int(title.jaar)
+        else:
+            match = re.search(r'\d\d\d\d', title.jaar)
+            if match:
+                t_year = int(match.group())
+            else:
+                t_year = 2022
+
+        n = (t_year-year_start)/bin_size
+        for genre in title.genres.all():
+            genre_histogram[n][genre.genre] += 1
+        
+        for subgenre in title.subgenres.all():
+            if subgenre.subgenre in subgenres_s:
+                subgenre_histogram[n][subgenre.subgenre] += 1
 
     context = {
         'genres': genres,
+        'genre_histogram': json.dumps(genre_histogram.values()),
         'subgenres': subgenres,
+        'subgenre_histogram': json.dumps(subgenre_histogram.values()),
         'total_titles': total_titles
     }
 
