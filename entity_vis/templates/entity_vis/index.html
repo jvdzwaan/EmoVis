@@ -36,7 +36,7 @@
         <script>
 
             var margin = {top: 20, right: 20, bottom: 30, left: 50},
-                width = 960 - margin.left - margin.right,
+                width = 5760 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
             var x = d3.scale.linear()
@@ -65,7 +65,7 @@
              .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            d3.csv("{% static 'data/feit007patr01/Eloiza.csv'  %}", function(error, data) {
+            d3.csv("{% static 'data/feit007patr01/Eloiza-posneg.csv'  %}", function(error, data) {
                 color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Sentence"; }));
                 
                 data.forEach(function(d) {
