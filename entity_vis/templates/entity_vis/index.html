@@ -40,7 +40,12 @@
     </head>
 
     <body>
-        <h1>{{ title }}</h1>
+    <h1>{{ title }} ({{ year }})</h1>
+        <p>
+            Auteur(s): {{ authors|join:", " }} </br>
+            Genre(s): {{ genres|join:", " }} </br>
+            Subgenre(s): {{ subgenres|join:", " }} </br>
+        </p>
         <script>
 
             var margin = {top: 20, right: 20, bottom: 30, left: 50},
