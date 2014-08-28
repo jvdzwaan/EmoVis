@@ -11,7 +11,6 @@ class Character(models.Model):
     num_speaking_turns = models.IntegerField()
 
 class SpeakingTurn(models.Model):
-    play = models.ForeignKey(Titel)
     character = models.ForeignKey(Character)
     order = models.IntegerField()
     entity = models.ManyToManyRel(Entity)
