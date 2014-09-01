@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 
 from corpus.models import Titel
 
-def posemo(request):
+def entities_in_play(request):
     title_id = 'feit007patr01'
     title = get_object_or_404(Titel, pk=title_id)
 
