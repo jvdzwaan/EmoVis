@@ -8,6 +8,16 @@ class Entity(models.Model):
     def __unicode__(self):
         return self.name
 
+class EntityScore(models.Model):
+    speakingturn = models.ForeignKey('SpeakingTurn')
+    entity = models.ForeignKey(Entity)
+    score = models.IntegerField()
+
+    def __unicode__(self):
+        return '{}: {} - {}'.format(self.speakingturn,
+                                    self.entity.name,
+                                    self.score)
+
 class Character(models.Model):
     name = models.CharField(max_length=50)
     play = models.ForeignKey(Titel)
@@ -19,8 +29,7 @@ class Character(models.Model):
 class SpeakingTurn(models.Model):
     character = models.ForeignKey(Character)
     order = models.IntegerField()
-    entity = models.ManyToManyRel(Entity)
-    score = models.IntegerField()
+    entity = models.ManyToManyRel(Entity, through=EntityScore)
 
     def __unicode__(self):
         return '({}) {}'.format(self.order,
