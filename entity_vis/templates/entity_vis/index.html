@@ -71,7 +71,7 @@
 
             var line = d3.svg.line()
                 .x(function(d) { return x(d.Turn); })
-                .y(function(d) { return y(d.frequency); });
+                .y(function(d) { return y(d.score); });
 
             var svg = d3.select("body").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -79,67 +79,55 @@
              .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            d3.csv("{% static 'data/feit007patr01/patr-t-5-sm.csv'  %}", function(error, data) {
-                color.domain(d3.keys(data[0]).filter(function(key) { return key !== "Turn"; }));
-                
-                data.forEach(function(d) {
-                    d.Turn = +d.Turn;
-                });
+            var data = {{ data|safe }};
+            console.log(data)
 
-                var liwc_categories = color.domain().map(function(name) {
-                    return {
-                        name: name,
-                        values: data.map(function(d) {
-                            return {Turn: d.Turn, frequency: +d[name]};
-                        })
-                    };
-                });
+            x.domain([
+                d3.min(data, function(c) { return d3.min(c.values, function(v){ return v.Turn; }); }),
+                d3.max(data, function(c) { return d3.max(c.values, function(v){ return v.Turn; }); })
+            ]);
+            y.domain([
+                d3.min(data, function(c) { return d3.min(c.values, function(v) { return v.score; }); }),
+                d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.score; }); })
+            ]);
 
-                x.domain(d3.extent(data, function(d) { return d.Turn; }));
-                y.domain([
-                    d3.min(liwc_categories, function(c) { return d3.min(c.values, function(v) { return v.frequency; }); }),
-                    d3.max(liwc_categories, function(c) { return d3.max(c.values, function(v) { return v.frequency; }); })
-                ]);
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+              .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("score");
 
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis)
-                  .append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
-                    .attr("dy", ".71em")
-                    .style("text-anchor", "end")
-                    .text("r");
+            var liwc_cat = svg.selectAll(".liwc")
+                .data(data)
+              .enter().append("g")
+                .attr("class", "liwc");
 
-                var liwc_cat = svg.selectAll(".liwc")
-                    .data(liwc_categories)
-                  .enter().append("g")
-                    .attr("class", "liwc");
+            liwc_cat.append("path")
+                .attr("class", "line")
+                .attr("d", function(d) { return line(d.values); })
+                .attr("data-legend", function(d) { return d.name; })
+                .style("stroke", function(d) { return color(d.name); });
 
-                liwc_cat.append("path")
-                    .attr("class", "line")
-                    .attr("d", function(d) { return line(d.values); })
-                    .attr("data-legend", function(d) { return d.name; })
-                    .style("stroke", function(d) { return color(d.name); });
-
-                liwc_cat.append("text")
-                    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-                    .attr("transform", function(d) { return "translate(" + x(d.value.Turn) + "," + y(d.value.frequency) + ")"; })
-                    .attr("x", 3)
-                    .attr("dy", ".35em")
-                    .text(function(d) { return d.name; });
+            liwc_cat.append("text")
+                .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+                .attr("transform", function(d) { return "translate(" + x(d.value.Turn) + "," + y(d.value.score) + ")"; })
+                .attr("x", 3)
+                .attr("dy", ".35em")
+                .text(function(d) { return d.name; });
             
-                legend = svg.append("g")
-                    .attr("class","legend")
-                    .attr("transform","translate(30,15)")
-                    .call(d3.legend)
-            });
-
+            legend = svg.append("g")
+                .attr("class","legend")
+                .attr("transform","translate(30,15)")
+                .call(d3.legend)
 
         </script>
     </body>
