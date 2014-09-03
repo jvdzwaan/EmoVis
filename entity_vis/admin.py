@@ -1,5 +1,6 @@
 from django.contrib import admin
-from entity_vis.models import Entity, Character, SpeakingTurn, EntityScore
+from entity_vis.models import Entity, Character, SpeakingTurn, EntityScore, \
+                              EntityValue
 
 
 class CharacterAdmin(admin.ModelAdmin):
@@ -12,3 +13,4 @@ admin.site.register(Entity)
 admin.site.register(Character, CharacterAdmin)
 admin.site.register(SpeakingTurn)
 admin.site.register(EntityScore)
+admin.site.register(EntityValue)
