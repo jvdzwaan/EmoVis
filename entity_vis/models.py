@@ -8,9 +8,16 @@ class Entity(models.Model):
     def __unicode__(self):
         return self.name
 
+class EntityValue(models.Model):
+    name = models.CharField(max_length=140)
+
+    def __unicode__(self):
+        return self.name
+
 class EntityScore(models.Model):
     speakingturn = models.ForeignKey('SpeakingTurn')
     entity = models.ForeignKey(Entity)
+    entityvalues = models.ManyToManyField(EntityValue)
     score = models.IntegerField()
 
     def __unicode__(self):
