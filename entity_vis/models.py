@@ -29,7 +29,7 @@ class Character(models.Model):
 class SpeakingTurn(models.Model):
     character = models.ForeignKey(Character)
     order = models.IntegerField()
-    entity = models.ManyToManyRel(Entity, through=EntityScore)
+    entity = models.ManyToManyField(Entity, through=EntityScore)
 
     def __unicode__(self):
         return '({}) {}'.format(self.order,
