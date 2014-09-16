@@ -70,7 +70,6 @@ class Auteurxberoep(models.Model):
     beroep_id = models.CharField(max_length=2, blank=True)
     id = models.CharField(primary_key=True, max_length=5)
     class Meta:
-        managed = False
         db_table = 'auteurxberoep'
 
 class Auteurxorganisatie(models.Model):
@@ -78,7 +77,6 @@ class Auteurxorganisatie(models.Model):
     pers_id = models.CharField(max_length=7, blank=True)
     dbnl_orga_id = models.CharField(max_length=14, blank=True)
     class Meta:
-        managed = False
         db_table = 'auteurxorganisatie'
 
 class Beeld(models.Model):
@@ -97,14 +95,12 @@ class Beeld(models.Model):
     sortering = models.TextField(blank=True)
     pagina = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'beeld'
 
 class Beroep(models.Model):
     beroep_id = models.CharField(primary_key=True, max_length=2)
     omschrijving = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'beroep'
 
 class Genre(models.Model):
@@ -132,14 +128,12 @@ class Landen(models.Model):
     opmerkingen = models.TextField(blank=True)
     naamsvariant = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'landen'
 
 class Landxwerelddeel(models.Model):
-    land_id = models.CharField(max_length=7, blank=True)
+    land_id = models.CharField(max_length=7)
     werelddeel_id = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'landxwerelddeel'
 
 class Naamsvariant(models.Model):
@@ -149,7 +143,6 @@ class Naamsvariant(models.Model):
     voornaam = models.TextField(blank=True)
     voorvoegsel = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'naamsvariant'
 
 class Organisatie(models.Model):
@@ -168,7 +161,6 @@ class Organisatie(models.Model):
     voorvoegsel = models.TextField(blank=True)
     buitenland = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'organisatie'
 
 class Subgenre(models.Model):
@@ -252,14 +244,12 @@ class TitelBevat(models.Model):
     ti_id = models.CharField(max_length=14, blank=True)
     parent_ti_id = models.CharField(max_length=14, blank=True)
     class Meta:
-        managed = False
         db_table = 'titel_bevat'
 
 class TitelCat(models.Model):
     ti_id = models.CharField(primary_key=True, max_length=14)
     categorie = models.IntegerField()
     class Meta:
-        managed = False
         db_table = 'titel_cat'
 
 class Titelxauteur(models.Model):
@@ -267,7 +257,6 @@ class Titelxauteur(models.Model):
     ti_id = models.ForeignKey(Titel, db_column='ti_id')
     pers_id = models.ForeignKey(Auteur, db_column='pers_id')
     class Meta:
-        managed = False
         db_table = 'titelxauteur'
 
 class Titelxediteur(models.Model):
@@ -275,7 +264,6 @@ class Titelxediteur(models.Model):
     ti_id = models.CharField(max_length=13, blank=True)
     pers_id = models.CharField(max_length=7, blank=True)
     class Meta:
-        managed = False
         db_table = 'titelxediteur'
 
 class Titelxgenre(models.Model):
@@ -283,7 +271,6 @@ class Titelxgenre(models.Model):
     ti_id = models.ForeignKey(Titel, db_column='ti_id')
     genre_id = models.ForeignKey(Genre, db_column='genre_id')
     class Meta:
-        managed = False
         db_table = 'titelxgenre'
 
 class Titelxillustrator(models.Model):
@@ -291,7 +278,6 @@ class Titelxillustrator(models.Model):
     ti_id = models.CharField(max_length=14, blank=True)
     pers_id = models.CharField(max_length=7, blank=True)
     class Meta:
-        managed = False
         db_table = 'titelxillustrator'
 
 class Titelxsubgenre(models.Model):
@@ -299,7 +285,6 @@ class Titelxsubgenre(models.Model):
     ti_id = models.ForeignKey(Titel, db_column='ti_id')
     subgenre_id = models.ForeignKey(Subgenre, db_column='subgenre_id')
     class Meta:
-        managed = False
         db_table = 'titelxsubgenre'
 
 class Titelxvertaler(models.Model):
@@ -307,7 +292,6 @@ class Titelxvertaler(models.Model):
     ti_id = models.CharField(max_length=14, blank=True)
     pers_id = models.CharField(max_length=7, blank=True)
     class Meta:
-        managed = False
         db_table = 'titelxvertaler'
 
 class Topo(models.Model):
@@ -332,13 +316,11 @@ class Topo(models.Model):
     omschrijving = models.TextField(blank=True)
     land_id = models.CharField(max_length=7, blank=True)
     class Meta:
-        managed = False
         db_table = 'topo'
 
 class Werelddeel(models.Model):
     werelddeel_id = models.CharField(primary_key=True, max_length=2)
     werelddeel = models.TextField(blank=True)
     class Meta:
-        managed = False
         db_table = 'werelddeel'
 
