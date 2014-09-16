@@ -15,7 +15,8 @@ plays = imp.load_source('plays',
                         '_scripts/emotools/plays.py')
 
 from django.core.management.base import BaseCommand
-from entity_vis.models import Character, Entity, SpeakingTurn, EntityScore
+from entity_vis.models import Character, Entity, SpeakingTurn, EntityScore, \
+                              EntityValue
 from corpus.models import Titel
 
 
@@ -78,10 +79,17 @@ class Command(BaseCommand):
 
                 # entity scores
                 entity_counter = Counter()
+                entity_values = {}
                 entities = sp.find_all(bs4_helpers.entity)
                 for e in entities:
-                    if e.get('class').startswith('{}-'.format(entity_class)):
-                        entity_counter[e.get('class')] += 1
+                    e_type = e.get('class')
+                    if e_type.startswith('{}-'.format(entity_class)):
+                        entity_counter[e_type] += 1
+                        if not entity_values.get(e_type):
+                            entity_values[e_type] = []
+                        wrefs = e.find_all('wref')
+                        text_content = [w.get('t') for w in wrefs]
+                        entity_values[e_type].append(' '.join(text_content))
 
                 for ent in entity_counter:
                     e = Entity.objects.get(name=ent)
@@ -90,4 +98,8 @@ class Command(BaseCommand):
                                      score=entity_counter[ent])
                     es.save()
 
-                    self.stdout.write('  {}'.format(es))
+                    for ent_value in entity_values.get(ent):
+                        # get_or_create() returns a tuple (obj, created)
+                        ev = EntityValue.objects \
+                                        .get_or_create(name=ent_value)[0]
+                        es.entityvalues.add(ev)
