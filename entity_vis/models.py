@@ -1,7 +1,5 @@
 from django.db import models
 
-from corpus.models import Titel
-
 class Entity(models.Model):
     name = models.CharField(max_length=30)
 
@@ -27,7 +25,7 @@ class EntityScore(models.Model):
 
 class Character(models.Model):
     name = models.CharField(max_length=50)
-    play = models.ForeignKey(Titel)
+    play = models.ForeignKey('corpus.Titel')
     num_speaking_turns = models.IntegerField()
 
     def __unicode__(self):
