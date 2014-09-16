@@ -130,5 +130,35 @@
                 .call(d3.legend)
 
         </script>
+
+        <table border="1">
+            <tr>
+                <td>#</td>
+                <td>Personage</td>
+                <td>liwc-Posemo</td>
+                <td>liwc-Negemo</td>
+            </tr>
+
+            {% for sp in speakingturns %}
+                <tr>
+                    <td>{{ sp.order }}</td>
+                    <td>{{ sp.character.name }}</td>
+                    <td>
+                        {% for e in sp.entityscore_set.all %}
+                            {% if e.entity.name == 'liwc-Posemo' %}
+                                {{ e.entityvalues.all|join:'<br>' }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for e in sp.entityscore_set.all %}
+                            {% if e.entity.name == 'liwc-Negemo' %}
+                                {{ e.entityvalues.all|join:'<br>' }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+
     </body>
 </html>
