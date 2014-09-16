@@ -71,7 +71,8 @@ def entities_in_play(request):
         'authors': [a.voornaam+' '+a.achternaam for a in title.auteurs.all()],
         'genres': [genre.genre for genre in title.genres.all()],
         'subgenres': [subgenre.subgenre for subgenre in title.subgenres.all()],
-        'data': json.dumps(data)
+        'data': json.dumps(data),
+        'speakingturns': speakingturns
     }
 
     return render(request, 'entity_vis/index.html', context)
