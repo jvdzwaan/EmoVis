@@ -249,10 +249,9 @@ class Titel(models.Model):
         return ' '.join(result)
 
 class TitelBevat(models.Model):
-    ti_id = models.CharField(max_length=14, blank=True)
-    parent_ti_id = models.CharField(max_length=14, blank=True)
+    ti_id = models.ForeignKey(Titel)
+    parent_ti_id = models.ForeignKey(Titel, related_name='eerste_druk')
     class Meta:
-        managed = False
         db_table = 'titel_bevat'
 
 class TitelCat(models.Model):
