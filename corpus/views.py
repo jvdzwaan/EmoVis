@@ -4,7 +4,7 @@ import re
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
-from models import Titel, Auteur, Titelxauteur, Genre, Subgenre
+from models import Titel, Auteur, Titelxauteur, Genre, Subgenre, TitelBevat
 
 _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01', 
     'bild002dich04', 'hoof001thes01', 'hare003agon01', 'asse001kwak01', 
@@ -210,3 +210,15 @@ def show_subgenre(request, genre_id):
     }
     
     return render(request, 'corpus/plays.html', context)
+
+
+def show_first_year_of_publication(request):
+    title_contains = TitelBevat.objects.select_related() \
+                                       .filter(ti_id__in=_corpus_ids)
+
+    context = {
+        'title_contains': title_contains,
+        'page_title': 'Eerste drukken van titels in corpus'
+    }
+
+    return render(request, 'corpus/playscontain.html', context)
