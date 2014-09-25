@@ -187,6 +187,9 @@ class Titel(models.Model):
     auteurs = models.ManyToManyField(Auteur, through='Titelxauteur')
     genres = models.ManyToManyField(Genre, through='Titelxgenre')
     subgenres = models.ManyToManyField(Subgenre, through='Titelxsubgenre')
+    contains = models.ManyToManyField('Titel',
+                                      through='TitelBevat',
+                                      related_name='parent_ti_id')
     pers_id_bk = models.CharField(max_length=7, blank=True)
     koepel_id = models.CharField(max_length=14, blank=True)
     kop_borkv_bk = models.TextField(blank=True)
@@ -249,8 +252,8 @@ class Titel(models.Model):
         return ' '.join(result)
 
 class TitelBevat(models.Model):
-    ti_id = models.ForeignKey(Titel)
-    parent_ti_id = models.ForeignKey(Titel, related_name='eerste_druk')
+    ti_id = models.ForeignKey(Titel, related_name='reprints')
+    parent_ti_id = models.ForeignKey(Titel, related_name='originals')
     class Meta:
         db_table = 'titel_bevat'
 
