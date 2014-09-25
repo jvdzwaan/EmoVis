@@ -213,11 +213,11 @@ def show_subgenre(request, genre_id):
 
 
 def show_first_year_of_publication(request):
-    title_contains = TitelBevat.objects.select_related() \
-                                       .filter(ti_id__in=_corpus_ids)
+    corpus = Titel.objects.filter(ti_id__in=_corpus_ids) \
+                          .order_by('titel').order_by('jaar')
 
     context = {
-        'title_contains': title_contains,
+        'corpus': corpus,
         'page_title': 'Eerste drukken van titels in corpus'
     }
 

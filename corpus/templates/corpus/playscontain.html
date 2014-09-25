@@ -1,25 +1,42 @@
 {% load corpus_extras %}
 <h1>{{ page_title }}</h1>
-{% if title_contains %}
+{% if corpus %}
     <table border="1">
         <tr>
             <th>Titel in corpus</th>
             <th>Bevat</th>
         </tr>
-        {% for title in title_contains %}
-        <tr>
-            <td>
-                {% year_link title.ti_id.jaar %} - 
-                {% title_link title.ti_id %} - 
-                {% for auteur in title.ti_id.auteurs.all %}
-                    {% author_link auteur %}
+        {% for play in corpus %}
+            {% if play.contains.all %}
+                {% for original in play.contains.all %}
+                    <tr>
+                        <td>
+                            {% year_link play.jaar %} - 
+                            {% title_link play %} - 
+                            {% for auteur in play.auteurs.all %}
+                                {% author_link auteur %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {{ original.jaar }} - 
+                            {{ original.titel }} 
+                        </td>
+                    </tr>
                 {% endfor %}
-            </td>
-            <td>
-                {{ title.parent_ti_id.jaar }} - 
-                {{ title.parent_ti_id.titel }} 
-            </td>
-        </tr>
+            {% else %}
+                <tr>
+                    <td>
+                        {% year_link play.jaar %} - 
+                        {% title_link play %} - 
+                        {% for auteur in play.auteurs.all %}
+                            {% author_link auteur %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <br/>
+                    </td>
+                </tr>
+            {% endif %}
         {% endfor %}
     </table>
 {% else %}
