@@ -1,0 +1,27 @@
+{% load corpus_extras %}
+<h1>{{ page_title }}</h1>
+{% if title_contains %}
+    <table border="1">
+        <tr>
+            <th>Titel in corpus</th>
+            <th>Bevat</th>
+        </tr>
+        {% for title in title_contains %}
+        <tr>
+            <td>
+                {% year_link title.ti_id.jaar %} - 
+                {% title_link title.ti_id %} - 
+                {% for auteur in title.ti_id.auteurs.all %}
+                    {% author_link auteur %}
+                {% endfor %}
+            </td>
+            <td>
+                {{ title.parent_ti_id.jaar }} - 
+                {{ title.parent_ti_id.titel }} 
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No plays in corpus.</p>
+{% endif %}
