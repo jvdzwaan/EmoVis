@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+
+    <body>
+    <h1>{{ title }}</h1>
+    
+    <h2>Aantal resultaten</h2>
+    <p>Aantal speakingturns per woord waarop gezocht is.</p>
+    <table border="1">
+        <tr><th>Woord</th><th>gevonden in # speakingturns</th></tr>
+        {% for word in doc_counts %}
+            <tr>
+                <td>{{ word.word }}</td>
+                <td>{{ word.count }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <h2>Gevonden speakingturns</h2>
+    <table border="1">
+        <tr>
+            <th>Jaar</th>
+            <th>Toneelstuk</th>
+            <th>Spreker</th>
+            <th>Tekst</th>
+        </tr>
+        {% for sp in speakingturns %}
+            <tr>
+                <td>{{ sp.year }}</td>
+                <td>{{ sp.title }}</td>
+                <td>{{ sp.actor }}</td>
+                <td>{{ sp.text }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Woordfrequenties</h2>
+    <p>100 meest voorkomende woorden in de gevonden speakingturns.</p>
+    <table border="1">
+        <tr>
+            <th>Woord</th>
+            <th>Aantal</th>
+        </tr>
+        {% for word in word_frequencies %}
+            <tr>
+                <td>{{ word.key }}</td>
+                <td>{{ word.doc_count }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </body>
+</html>
