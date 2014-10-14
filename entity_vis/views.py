@@ -79,13 +79,29 @@ def entities_in_play(request):
     return render(request, 'entity_vis/index.html', context)
 
 
-def find_in_speakingturns(request):
+def find_in_speakingturns(request, concept):
     es = Elasticsearch()
     index_name = 'embodied_emotions'
     doc_type = 'event'
 
-    words = ['Berusting', 'Berustinghe', 'Berusten', 'Berust', 'Beruste',
-             'Berustend', 'Berustende', 'Berustte']
+    concepts = {
+        'berusting': ['Berusting', 'Berustinghe', 'Berusten', 'Berust',
+                      'Beruste', 'Berustend', 'Berustende', 'Berustte'],
+        'lijdzaam': ['Lijdzaam', 'Lijdzame', 'Lijdzaem', 'Lydzaame',
+                     'Lijdtsaem', 'Lydsaam', 'Lijdzaame', 'Lydzaam',
+                     'Lijdzamer', 'Lydzamer',
+                     'Lijdzaamer', 'Lydzaamer', 'Lijdsamer', 'Lydsamer',
+                     'Lijdsaamer', 'Lydsaamer', 'Lijdzaamheid', 'Lydsamheydts',
+                     'Lidtsaemheit', 'Lijdtsaemheyt', 'Lydzaamheid',
+                     'Lydzaamheit', 'Lijdzaemheit', 'Lijdtsaemheydt',
+                     'Lijtsaemheyd', 'Lijdsaemheyt', 'Lytsaamheden'],
+        'gelaten': ['Gelaten', 'Gelatene', 'Gelaeten', 'Gelacten',
+                    'Gelatener', 'Ghelaten', 'Gelaaten', 'Gelaeten',
+                    'Gelaatende', 'Gelatende', 'Gelatenheid', 'Gelatenheit',
+                    'Gelatentheit', 'Gelaatenheid', 'Gelatenheid']
+    }
+
+    words = concepts.get(concept, [])
 
     # number of results for each word
     doc_counts = []
@@ -137,7 +153,8 @@ def find_in_speakingturns(request):
                              .get('buckets')
 
     context = {
-        'title': 'Zoekresultaten in speakingturns',
+        'title': 'Zoekresultaten in speakingturns voor "{}"'.format(concept),
+        'concept': concept,
         'doc_counts': doc_counts,
         'speakingturns': speakingturns,
         'word_frequencies': word_frequencies
