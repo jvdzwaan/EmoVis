@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Add year genre and subgenre to ElasticSearch index.
+"""
+from elasticsearch import Elasticsearch, helpers
+
+from django.core.management.base import BaseCommand
+from corpus.models import Titel
+
+
+class Command(BaseCommand):
+    help = 'Add genre and subgenre data for plays in the corpus to the ' \
+           'ElasticSearch index.'
+
+    def handle(self, *args, **options):
+        index_name = 'embodied_emotions'
+        doc_type = 'event'
+
+        # Get text ids
+        es = Elasticsearch()
+        query = {
+            'query': {'match_all': {}},
+            'size': 0,
+            'aggregations': {
+                'ids': {
+                    'terms': {
+                        'field': 'text_id',
+                        'size': 1000
+                    }
+                }
+            }
+        }
+
+        result = es.search(index=index_name, doc_type=doc_type, body=query)
+        text_ids = [b.get('key') for b in result.get('aggregations')
+                                                .get('ids').get('buckets')]
+        for text_id in text_ids:
+            title = Titel.objects.get(pk=text_id)
+            print '({}) {}'.format((text_ids.index(text_id)+1), title)
+
+            subtitles = title.contains.all()
+
+            genres = None
+            subgenres = None
+            if not subtitles:
+                # the genres and subgenres we want to save to ES are the genre
+                # and subgenre of title
+                genres = title.genres.all()
+                subgenres = title.subgenres.all()
+            elif len(subtitles) == 1:
+                # the year we want to save to ES is the year of the subtitle
+                genres = subtitles[0].genres.all()
+                subgenres = subtitles[0].subgenres.all()
+            else:
+                print '\tMultiple subtitles - unclear which one to choose'
+                for t in subtitles:
+                    print '\t', t
+                print 'Will not be saved to ElasticSearch.'
+
+            if genres:
+                # get all events for text id
+                q = {
+                    "query": {
+                        "term": {
+                            "text_id": {
+                                "value": text_id
+                            }
+                        }
+                    }
+                }
+
+                gs = [g.genre for g in genres]
+                print ' - '.join(gs)
+
+                sgs = [sg.subgenre for sg in subgenres]
+                print ' - '.join(sgs)
+
+                doc = {
+                    'doc': {
+                        'genre': gs,
+                        'subgenre': sgs
+                    }
+                }
+
+                results = helpers.scan(client=es, query=q)
+                for r in results:
+                    # save genres and subgenres to ES
+                    es.update(index=index_name, doc_type=doc_type,
+                              id=r.get('_id'), body=doc)
+                print ''
