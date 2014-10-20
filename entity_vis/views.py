@@ -86,6 +86,7 @@ def entity_words(request):
     entity_words = {}
     ew_year = {}
     ew_genre = {}
+    ew_genre_year = {}
     num_texts = 0
 
     for cat in categories:
@@ -128,7 +129,8 @@ def entity_words(request):
                             "cardinality": {
                                 "field": "text_id"
                             }
-                        }
+                        },
+
                     }
                 },
                 "entities-genre": {
@@ -149,6 +151,39 @@ def entity_words(request):
                             }
                         }
                     }
+                },
+                "subgenre": {
+                    "terms": {
+                        "field": "subgenre",
+                        "size": 25
+                    },
+                    "aggs": {
+                        "year": {
+                            "histogram": {
+                                "field": "year",
+                                "interval": 10,
+                                "min_doc_count": 0,
+                                "extended_bounds": {
+                                    "min": 1600,
+                                    "max": 1850
+                                }
+                            },
+                            "aggs": {
+                                "entity": {
+                                    "terms": {
+                                        "field": "liwc-entities.data.{}"
+                                                 .format(cat),
+                                        "size": 25,
+                                    }
+                                },
+                                "texts": {
+                                    "cardinality": {
+                                        "field": "text_id"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -157,16 +192,18 @@ def entity_words(request):
         entity_words[cat] = result.get('aggregations').get(cat).get('buckets')
         num_texts = int(result.get('aggregations').get('num_texts')
                               .get('value'))
-        ew_year[cat] = result.get('aggregations').get('entities-year') \
-                             .get('buckets')
         ew_genre[cat] = result.get('aggregations').get('entities-genre') \
                               .get('buckets')
-
+        ew_year[cat] = result.get('aggregations').get('entities-year') \
+                             .get('buckets')
+        ew_genre_year[cat] = result.get('aggregations').get('subgenre') \
+                                   .get('buckets')
     context = {
         'entity_words': entity_words,
         'num_texts': num_texts,
         'ew_year': ew_year,
         'ew_genre': ew_genre,
+        'ew_genre_year': ew_genre_year,
         'range': range(25)
     }
 
