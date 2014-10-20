@@ -81,7 +81,11 @@ def entities_in_play(request):
 
 
 def entity_words(request):
-    categories = request.GET.get('categories', '').split(',')
+    categories = request.GET.get('categories', '')
+    if not categories:
+        categories = []
+    else:
+        categories = categories.split(',')
 
     entity_words = {}
     ew_year = {}
