@@ -1,0 +1,27 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Entity Words</title>
+    </head>
+
+    <body>
+    <h1>Entity Words</h1>
+
+    <h2>Frequency in corpus ({{ num_texts }} texts)</h2>
+    {% for category, values in entity_words.items %}
+        <table border="1" style="float: left">
+            <tr>
+                <th>{{ category }}</th><th>Frequency</th>
+            </tr>
+            {% for v in values|slice:":25" %}
+                <tr>
+                    <td>{{ v.key }}</td>
+                    <td>{{ v.doc_count }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+    <div style="clear:both;"></div>
+    </body>
+</html>
+
