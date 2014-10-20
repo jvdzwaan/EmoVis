@@ -80,6 +80,38 @@ def entities_in_play(request):
     return render(request, 'entity_vis/index.html', context)
 
 
+def entity_words(request):
+    categories = request.GET.get('categories', '').split(',')
+
+    entity_words = {}
+
+    for cat in categories:
+        print cat
+        q = {
+            "query": {
+                "match_all": {}
+            },
+            "size": 0,
+            "aggregations": {
+                cat: {
+                    "terms": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                        "size": 1000
+                    }
+                }
+            }
+        }
+
+        result = search_query(q, 'event')
+        entity_words[cat] = result.get('aggregations').get(cat).get('buckets')
+
+    context = {
+        'entity_words': entity_words
+    }
+
+    return render(request, 'entity_vis/entitywords.html', context)
+
+
 def find_in_speakingturns(request, concept):
     es = Elasticsearch()
     index_name = 'embodied_emotions'
