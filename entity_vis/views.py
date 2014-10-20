@@ -6,7 +6,8 @@ from django.db.models import Q
 
 from corpus.models import Titel
 from entity_vis.models import Character, EntityScore, SpeakingTurn
-from entity_vis.es import get_r_score, moving_average
+from entity_vis.entitysc import get_r_score, moving_average
+from entity_vis.es import search_query
 
 
 def entities_in_play(request):
