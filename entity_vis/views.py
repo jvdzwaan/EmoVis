@@ -84,6 +84,8 @@ def entity_words(request):
     categories = request.GET.get('categories', '').split(',')
 
     entity_words = {}
+    ew_year = {}
+    num_texts = 0
 
     for cat in categories:
         print cat
@@ -98,15 +100,46 @@ def entity_words(request):
                         "field": "liwc-entities.data.{}".format(cat),
                         "size": 1000
                     }
+                },
+                "num_texts": {
+                    "cardinality": {
+                        "field": "text_id"
+                    }
+                },
+                "entities-year": {
+                    "histogram": {
+                        "field": "year",
+                        "interval": 10,
+                        "min_doc_count": 0,
+                        "extended_bounds": {
+                            "min": 1600,
+                            "max": 1850
+                        }
+                    },
+                    "aggs": {
+                        "entity": {
+                            "terms": {
+                                "field": "liwc-entities.data.{}".format(cat),
+                                "size": 25
+                            }
+                        }
+                    }
                 }
             }
         }
 
         result = search_query(q, 'event')
         entity_words[cat] = result.get('aggregations').get(cat).get('buckets')
+        num_texts = int(result.get('aggregations').get('num_texts')
+                              .get('value'))
+        ew_year[cat] = result.get('aggregations').get('entities-year') \
+                             .get('buckets')
 
     context = {
-        'entity_words': entity_words
+        'entity_words': entity_words,
+        'num_texts': num_texts,
+        'ew_year': ew_year,
+        'range': range(25)
     }
 
     return render(request, 'entity_vis/entitywords.html', context)

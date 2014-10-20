@@ -22,6 +22,28 @@
         </table>
     {% endfor %}
     <div style="clear:both;"></div>
+
+    <h2>Entities per year</h2>
+    {% for category, values in ew_year.items %}
+        <h3>{{ category }}</h3>
+        {% for v in values %}
+            <table border="1" style="float: left">
+                <th colspan="2">{{ v.key }}</th>
+                {% for b in v.entity.buckets %}
+                    <tr>
+                        <td>{{ b.key }}</td><td>{{ b.doc_count }}</td>
+                    </tr>
+                {% empty %}
+                    {% for i in range %}
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        {% endfor %}
+        <div style="clear:both;"></div>
+    {% endfor %}
     </body>
 </html>
 
