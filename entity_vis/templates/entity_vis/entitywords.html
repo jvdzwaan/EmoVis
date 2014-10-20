@@ -28,7 +28,7 @@
         <h3>{{ category }}</h3>
         {% for v in values %}
             <table border="1" style="float: left">
-                <th colspan="2">{{ v.key }}</th>
+                <th colspan="2">{{ v.key }} ({{ v.texts.value }})</th>
                 {% for b in v.entity.buckets %}
                     <tr>
                         <td>{{ b.key }}</td><td>{{ b.doc_count }}</td>

@@ -123,6 +123,11 @@ def entity_words(request):
                                 "field": "liwc-entities.data.{}".format(cat),
                                 "size": 25
                             }
+                        },
+                        "texts": {
+                            "cardinality": {
+                                "field": "text_id"
+                            }
                         }
                     }
                 },
