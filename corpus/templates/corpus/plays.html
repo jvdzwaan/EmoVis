@@ -1,4 +1,9 @@
+{% extends 'base.html' %}
 {% load corpus_extras %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
 <h1>{{ page_title }}</h1>
 {% if corpus %}
     <ul>
@@ -15,3 +20,4 @@
 {% else %}
     <p>No plays in corpus.</p>
 {% endif %}
+{% endblock %}
