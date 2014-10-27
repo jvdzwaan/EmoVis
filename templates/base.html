@@ -1,8 +1,12 @@
 {% load staticfiles %}
-<html>
+<html ng-app="embEmApp">
     <head>
         <meta charset="utf-8">
         <title>{% block title %}{% endblock %}</title>
+
+        <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+        <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}">
+
         <script type="text/javascript" src="{% static 'd3/d3.min.js'%}" charset="utf-8"></script>
         <script type="text/javascript" src="{% static 'js/stacked-bar-chart.js'%}" charset="utf-8"></script>
         <style>
@@ -25,7 +29,12 @@
     </head>
     <body>
         <script type="text/javascript" src="{% static 'angular/angular.js'%}" charset="utf-8"></script>
+
             {% block content %}{% endblock %}
-        
+
+        <script src="{% static 'jquery/dist/jquery.min.js'%}"></script>
+
+        <script src="{% static 'bootstrap/dist/js/bootstrap.min.js'%}"></script>
+        <script src="{% static 'js/controllers.js' %}"></script>
     </body>
 </html>
