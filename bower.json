@@ -1,0 +1,21 @@
+{
+  "name": "EmbodiedEmotionsVisualization",
+  "version": "0.0.1",
+  "homepage": "https://github.com/jvdzwaan/EmoVis",
+  "authors": [
+    "Janneke van der Zwaan <j.vanderzwaan@esciencecenter.nl>"
+  ],
+  "description": "Visualization for the Embodied Emotions project.",
+  "license": "Apache 2.0",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.4.13"
+  }
+}
