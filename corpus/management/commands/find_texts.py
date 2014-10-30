@@ -25,6 +25,14 @@ def get_year(title):
     return None
 
 
+def relevant(title, genre_drama):
+    if genre_drama in title.genres.all():
+        year = get_year(title)
+        if year <= 1830 and year >= 1600:
+            return True
+    return False
+
+
 class Command(BaseCommand):
     help = 'Add year data for plays in the corpus to the ElasticSearch index.'
 
@@ -47,31 +55,20 @@ class Command(BaseCommand):
             t = get_title(text_id)
 
             if t:
-                if genre_drama in t.genres.all():
-                    year = get_year(t)
-                    if year <= 1830 and year >= 1600:
-                        title_ids[text_id] = None
+                # add title if it has genre drama and is from the right time
+                # period
+                if relevant(t, genre_drama):
+                    title_ids[text_id] = None
 
-        for line in lines:
-            text_id = line[0:13]
-            t = get_title(text_id)
-
-            if t:
-                if genre_drama in t.genres.all():
-                    if len(t.contains.all()) == 1:
-                        t2 = t.contains.all()[0]
-                        year = get_year(t2)
-
-                        if year and year <= 1830 and year >= 1600:
-                            if t2.ti_id not in title_ids.keys():
-                                title_ids[text_id] = None
-                                print 'Found older version of', t
-                                print t2
-                                print ''
-                    elif len(t.contains.all()) > 1:
-                        print t
-                        for t2 in t.contains.all():
-                            print '\t', t2
+                # add title if it contains at least one title that has genre
+                # drama and is from the right time period
+                contained_titles = t.contains.all()
+                add = False
+                for t2 in contained_titles:
+                    if relevant(t2, genre_drama):
+                        add = True
+                if add:
+                    title_ids[text_id] = None
 
         print '# titles found: {}'.format(len(title_ids.keys()))
         #print '\n'.join(title_ids.keys())
