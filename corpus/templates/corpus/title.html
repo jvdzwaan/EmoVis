@@ -22,3 +22,12 @@
         {% subgenre_link subgenre %} </br>
     {% endfor %}
 </p>
+
+<h2>Statistics</h2>
+{% for cat, stats in statistics.iteritems %}
+    <p>
+        # words: {{ stats.num_words }}
+        # {{ cat }} words: {{ stats.num_cat }}
+        Percentage {{ cat }}: {{ stats.percentage }}
+    </p>
+{% endfor %}

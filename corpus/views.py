@@ -4,6 +4,8 @@ import re
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 
+from entity_vis.es import search_query
+
 from models import Titel, Auteur, Titelxauteur, Genre, Subgenre, TitelBevat
 
 _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01', 
@@ -82,7 +84,65 @@ def index(request):
 def show_title(request, title_id):
     title = get_object_or_404(Titel, pk=title_id)
 
-    return render(request, 'corpus/title.html', {'title': title})
+    #categories = request.GET.get('categories', '')
+    categories = 'Posemo,Negemo,Body'
+    if not categories:
+        categories = []
+    else:
+        categories = categories.split(',')
+
+    statistics = {}
+    for cat in categories:
+        q = {
+            "query": {
+                "term": {
+                    "text_id": {
+                        "value": title_id
+                    }
+                }
+            },
+            "size": 0,
+            "aggregations": {
+                "ent_words": {
+                    "terms": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                        "size": 25
+                    }
+                },
+                "cat_count": {
+                    "value_count": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                    }
+                },
+                "num_words": {
+                    "sum": {
+                        "field": "num_words"
+                    }
+                }
+            }
+        }
+
+        result = search_query(q, 'event')
+
+        # Is title indexed?
+        if result.get('hits').get('total') > 0:
+            num_cat = result.get('aggregations').get('cat_count').get('value')
+            num_wrds = result.get('aggregations').get('num_words').get('value')
+            percentage = float(num_cat)/float(num_wrds)*100
+            ents = result.get('aggregations').get('ent_words').get('buckets')
+
+            statistics[cat] = {
+                'num_cat': num_cat,
+                'num_words': num_wrds,
+                'percentage': percentage,
+                'entity_words': ents
+            }
+
+    context = {
+        'title': title,
+        'statistics': statistics
+    }
+    return render(request, 'corpus/title.html', context)
 
 
 def show_author(request, author_id):
