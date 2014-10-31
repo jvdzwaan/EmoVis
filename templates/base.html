@@ -30,11 +30,55 @@
     <body>
         <script type="text/javascript" src="{% static 'angular/angular.js'%}" charset="utf-8"></script>
 
-            {% block content %}{% endblock %}
+        <div class="container-fluid" ng-controller="EntitiesCtrl">
+            <div class="row">
+                <div class="col-xs-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="glyphicon glyphicon-search input-group-addon"></div>
+                            <input type="text" class="form-control" id="search" placeholder="Search entities..." ng-model="query">
+                        </div>
+                        <div id="search-results" ng-show="query">
+                            <div class="search-result" ng-repeat="cat in categories | filter : searchFn as results" ng-cloak>
+                                <div style="display:inline-block;">
+                                    <strong>{% verbatim %}{{ cat.fields.name[0] }}{% endverbatim %}</strong>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="glyphicon glyphicon-eye-open" ng-click="setMainCat(cat.fields.name[0])" title="Set main category"></button>
+                                    <button type="button" class="glyphicon glyphicon-tag" ng-click="addToCompareWith(cat.fields.name[0])" title="Add category to compare with"></button>
+                                </div>
+                            </div>
+                            <div ng-if="results.length == 0" ng-cloak>No results.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-9">
+                    <div class="row">
+                        <div>
+                            Main category: 
+                            <span ng-show="mainCat">
+                                {% verbatim %}{{ mainCat }}{% endverbatim %} 
+                                <button class="btn btn-default btn-sm" ng-click="removeMainCat()" title="Remove main category">
+                                    <span class="glyphicon glyphicon-remove-circle"</span>
+                                </button>
+                            </span>
+                            <div ng-show="compareWith">
+                                Compare with:
+                                <span ng-repeat="cat in compareWith" ng-cloak>
+                                    {% verbatim %}{{ cat }}{% endverbatim %}
+                                    <button class="btn btn-link" ng-click="removeFromCompareWith(cat)" title="Remove category to compare with"><span class="glyphicon glyphicon-remove-circle"></span></button>
+                                </span>
+                            </div>
+                            <div>
+                                {% block content %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <script src="{% static 'jquery/dist/jquery.min.js'%}"></script>
+                <script src="{% static 'jquery/dist/jquery.min.js'%}"></script>
 
-        <script src="{% static 'bootstrap/dist/js/bootstrap.min.js'%}"></script>
-        <script src="{% static 'js/controllers.js' %}"></script>
-    </body>
-</html>
+                <script src="{% static 'bootstrap/dist/js/bootstrap.min.js'%}"></script>
+                <script src="{% static 'js/controllers.js' %}"></script>
+                </body>
+                </html>
