@@ -22,6 +22,9 @@ def get_year(title):
     m = re.search(r'\d{4}', title.jaar)
     if m:
         return int(m.group(0))
+    m = re.search(r'17de', title.jaar)
+    if m:
+        return int(1600)
     return None
 
 
@@ -70,5 +73,5 @@ class Command(BaseCommand):
                 if add:
                     title_ids[text_id] = None
 
-        print '# titles found: {}'.format(len(title_ids.keys()))
-        #print '\n'.join(title_ids.keys())
+        #print '# titles found: {}'.format(len(title_ids.keys()))
+        print '\n'.join(title_ids.keys())
