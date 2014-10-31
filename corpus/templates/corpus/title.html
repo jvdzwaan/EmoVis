@@ -28,12 +28,13 @@
     {% endfor %}
 </p>
 
-<h2>Statistics</h2>
-{% for cat, stats in statistics.iteritems %}
-    <p>
-        # words: {{ stats.num_words }}
-        # {{ cat }} words: {{ stats.num_cat }}
-        Percentage {{ cat }}: {{ stats.percentage }}
+<div ng-show="statistics">
+    <h2>Statistics</h2>
+    <p ng-repeat="stats in statistics">
+        {% verbatim %}
+            # words: {{ stats.num_words }}
+            # {{ stats.category }} words: {{ stats.num_cat }}
+            Percentage {{ stats.category }}: {{ stats.percentage }}
+        {% endverbatim %}
     </p>
-{% endfor %}
 {% endblock %}
