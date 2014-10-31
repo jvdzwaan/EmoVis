@@ -1,4 +1,9 @@
+{% extends 'base.html' %}
 {% load corpus_extras %}
+
+{% block title %}{{ title.titel }}{% endblock %}
+
+{% block content %}
 <h1>{{ title.titel }}</h1>
 <p>Door:
     {% for author in title.auteurs.all %}
@@ -31,3 +36,4 @@
         Percentage {{ cat }}: {{ stats.percentage }}
     </p>
 {% endfor %}
+{% endblock %}
