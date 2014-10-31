@@ -3,6 +3,7 @@ import json
 import re
 from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
 
 from entity_vis.es import search_query
 
@@ -81,17 +82,21 @@ def index(request):
 
     return render(request, 'corpus/plays.html', context)
 
+
 def show_title(request, title_id):
     title = get_object_or_404(Titel, pk=title_id)
 
-    #categories = request.GET.get('categories', '')
-    categories = 'Posemo,Negemo,Body'
-    if not categories:
-        categories = []
-    else:
-        categories = categories.split(',')
+    context = {
+        'title': title
+    }
+    return render(request, 'corpus/title.html', context)
 
-    statistics = {}
+
+def entity_statistics_for_title(request, title_id):
+    # angular sends post data in the request.body
+    categories = json.loads(request.body).get('categories')
+
+    statistics = []
     for cat in categories:
         q = {
             "query": {
@@ -131,18 +136,15 @@ def show_title(request, title_id):
             percentage = float(num_cat)/float(num_wrds)*100
             ents = result.get('aggregations').get('ent_words').get('buckets')
 
-            statistics[cat] = {
+            statistics.append({
+                'category': cat,
                 'num_cat': num_cat,
                 'num_words': num_wrds,
                 'percentage': percentage,
                 'entity_words': ents
-            }
+            })
 
-    context = {
-        'title': title,
-        'statistics': statistics
-    }
-    return render(request, 'corpus/title.html', context)
+    return JsonResponse(statistics, safe=False)
 
 
 def show_author(request, author_id):

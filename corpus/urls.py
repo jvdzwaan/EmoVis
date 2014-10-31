@@ -13,5 +13,6 @@ urlpatterns = patterns('',
     url(r'^genre/(?P<genre_id>\w+)$', views.show_genre, name='show_genre'),
     url(r'^subgenre/(?P<genre_id>\w+)$', views.show_subgenre),
     url(r'^originals$', views.show_first_year_of_publication),
-
+    url(r'^entity_stats/(?P<title_id>\w+)/$',
+        views.entity_statistics_for_title, name='entity_statistics_for_title'),
 )
