@@ -3,6 +3,7 @@ from elasticsearch import Elasticsearch
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
+from django.http import JsonResponse
 
 from corpus.models import Titel
 from entity_vis.models import Character, EntityScore, SpeakingTurn
@@ -78,6 +79,11 @@ def entities_in_play(request):
     }
 
     return render(request, 'entity_vis/index.html', context)
+
+
+def browse_entities(request):
+    context = {}
+    return render(request, 'entity_vis/browse_entities.html', context)
 
 
 def entity_words(request):
@@ -212,6 +218,47 @@ def entity_words(request):
     }
 
     return render(request, 'entity_vis/entitywords.html', context)
+
+
+def entity_categories(request):
+    q = {
+        "fields": ["name", "words"],
+        "size": 100,
+        "query": {
+            "match_all": {}
+        }
+    }
+    return JsonResponse(search_query(q, "entitycategory"))
+
+
+def entity_word_pairs(request):
+    input_cat = 'Body'
+    input_term = 'hart'
+    output_cats = ['Posemo', 'Negemo']
+
+    q = {
+        "query": {
+            "term": {
+                "liwc-entities.data.{}".format(input_cat): {
+                    "value": "{}".format(input_term)
+                }
+            }
+        },
+        "size": 0
+    }
+
+    agg = {}
+
+    for cat in output_cats:
+        agg[cat] = {
+            "terms": {
+                "field": "liwc-entities.data.{}".format(cat),
+                "size": 1000
+            }
+        }
+    q["aggs"] = agg
+
+    return JsonResponse(search_query(q, 'event'))
 
 
 def find_in_speakingturns(request, concept):
