@@ -147,6 +147,83 @@ def entity_statistics_for_title(request, title_id):
     return JsonResponse(statistics, safe=False)
 
 
+def entity_statistics_for_corpus(request):
+    # angular sends post data in the request.body
+    categories = json.loads(request.body).get('categories')
+
+    # corpus = all titles in elasticsearch
+    q = {
+        "query": {
+            "match_all": {}
+        },
+        "size": 0,
+        "aggs": {
+            "corpus": {
+                "terms": {
+                    "field": "text_id",
+                    "size": 1000
+                }
+            }
+        }
+    }
+
+    result = search_query(q, 'event')
+
+    corpus = [b['key'] for b in result['aggregations']['corpus']['buckets']]
+
+    statistics = {}
+
+    for title_id in corpus:
+        statistics[title_id] = []
+
+        for cat in categories:
+            q = {
+                "query": {
+                    "term": {
+                        "text_id": {
+                            "value": title_id
+                        }
+                    }
+                },
+                "size": 0,
+                "aggregations": {
+                    "ent_words": {
+                        "terms": {
+                            "field": "liwc-entities.data.{}".format(cat),
+                            "size": 25
+                        }
+                    },
+                    "cat_count": {
+                        "value_count": {
+                            "field": "liwc-entities.data.{}".format(cat),
+                        }
+                    },
+                    "num_words": {
+                        "sum": {
+                            "field": "num_words"
+                        }
+                    }
+                }
+            }
+
+            result = search_query(q, 'event')
+
+            num_cat = result.get('aggregations').get('cat_count').get('value')
+            num_wrds = result.get('aggregations').get('num_words').get('value')
+            percentage = float(num_cat)/float(num_wrds)*100
+            ents = result.get('aggregations').get('ent_words').get('buckets')
+
+            statistics[title_id].append({
+                'category': cat,
+                'num_cat': num_cat,
+                'num_words': num_wrds,
+                'percentage': percentage,
+                'entity_words': ents
+            })
+
+    return JsonResponse(statistics, safe=False)
+
+
 def show_author(request, author_id):
     author = get_object_or_404(Auteur, pk=author_id)
 
