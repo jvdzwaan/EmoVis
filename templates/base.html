@@ -73,6 +73,21 @@
                                 </span>
                             </div>
                             <div>
+                                <table class="table table-striped" ng-show="corpusStatistics">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th># words</th>
+                                            <th ng-show="mainCat">% {% verbatim %}{{ mainCat }}{% endverbatim %} words</th>
+                                            <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat="(title, stats) in corpusStatistics">
+                                        <td>{% verbatim %}{{ title }}{% endverbatim %}</td>
+                                        <td>{% verbatim %}{{ stats[0].num_words }}{% endverbatim %}</td>
+                                        <td ng-repeat="cat in stats">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</td>
+                                    </tr>
+                                </table>
                                 {% block content %}{% endblock %}
                             </div>
                         </div>

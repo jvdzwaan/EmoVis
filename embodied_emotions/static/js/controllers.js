@@ -19,6 +19,7 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     $scope.mainCat = '';
     $scope.compareWith = [];
     $scope.statistics = [];
+    $scope.corpusStatistics = {};
 
     $http.get('entity_vis/entity_categories').success(function (data){
         $scope.categories = data.hits.hits;
@@ -33,21 +34,25 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     $scope.setMainCat = function(cat) {
         $scope.mainCat = cat;
         $scope.getEntityStatisticsTitle($routeParams.titleId);
+        $scope.getEntityStatisticsCorpus();
     }
     $scope.removeMainCat = function() {
         $scope.mainCat = '';
         $scope.getEntityStatisticsTitle($routeParams.titleId);
+        $scope.getEntityStatisticsCorpus();
     }
     $scope.addToCompareWith = function(cat) {
         if($scope.compareWith.indexOf(cat) == -1){
             $scope.compareWith.push(cat);
         }
         $scope.getEntityStatisticsTitle($routeParams.titleId);
+        $scope.getEntityStatisticsCorpus();
     }
     $scope.removeFromCompareWith = function(cat) {
         var i = $scope.compareWith.indexOf(cat);
         $scope.compareWith.splice(i, 1);
         $scope.getEntityStatisticsTitle($routeParams.titleId);
+        $scope.getEntityStatisticsCorpus();
     }
     $scope.getEntityStatisticsTitle = function(title_id){
         if($scope.mainCat){
@@ -60,6 +65,19 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
             success(function (data){
                 console.log(data);
                 $scope.statistics = data;
+        });
+    }
+    $scope.getEntityStatisticsCorpus = function(){
+        if($scope.mainCat){
+            var categories = [$scope.mainCat].concat($scope.compareWith);
+        } else {
+            var categories = $scope.compareWith;
+        }
+        console.log(categories);
+        $http.post('corpus/entity_stats/', {categories: categories}).
+            success(function (data){
+                console.log(data);
+                $scope.corpusStatistics = data;
         });
     }
 });
