@@ -5,7 +5,7 @@ from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 
-from entity_vis.es import search_query
+from entity_vis.es import search_query, match_all, term_query
 
 from models import Titel, Auteur, Titelxauteur, Genre, Subgenre, TitelBevat
 
@@ -152,17 +152,12 @@ def entity_statistics_for_corpus(request):
     categories = json.loads(request.body).get('categories')
 
     # corpus = all titles in elasticsearch
-    q = {
-        "query": {
-            "match_all": {}
-        },
-        "size": 0,
-        "aggs": {
-            "corpus": {
-                "terms": {
-                    "field": "text_id",
-                    "size": 1000
-                }
+    q = match_all()
+    q["aggs"] = {
+        "corpus": {
+            "terms": {
+                "field": "text_id",
+                "size": 1000
             }
         }
     }
@@ -177,31 +172,22 @@ def entity_statistics_for_corpus(request):
         statistics[title_id] = []
 
         for cat in categories:
-            q = {
-                "query": {
-                    "term": {
-                        "text_id": {
-                            "value": title_id
-                        }
+            q = term_query('text_id', title_id)
+            q["aggregations"] = {
+                "ent_words": {
+                    "terms": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                        "size": 25
                     }
                 },
-                "size": 0,
-                "aggregations": {
-                    "ent_words": {
-                        "terms": {
-                            "field": "liwc-entities.data.{}".format(cat),
-                            "size": 25
-                        }
-                    },
-                    "cat_count": {
-                        "value_count": {
-                            "field": "liwc-entities.data.{}".format(cat),
-                        }
-                    },
-                    "num_words": {
-                        "sum": {
-                            "field": "num_words"
-                        }
+                "cat_count": {
+                    "value_count": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                    }
+                },
+                "num_words": {
+                    "sum": {
+                        "field": "num_words"
                     }
                 }
             }
