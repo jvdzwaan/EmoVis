@@ -149,7 +149,10 @@ def entity_statistics_for_title(request, title_id):
 
 def entity_statistics_for_corpus(request):
     # angular sends post data in the request.body
-    categories = json.loads(request.body).get('categories')
+    if request.body:
+        categories = json.loads(request.body).get('categories')
+    else:
+        categories = []
 
     # corpus = all titles in elasticsearch
     q = match_all()
@@ -158,18 +161,33 @@ def entity_statistics_for_corpus(request):
             "terms": {
                 "field": "text_id",
                 "size": 1000
+            },
+            "aggs": {
+                "num_words": {
+                    "sum": {
+                        "field": "num_words"
+                    }
+                }
             }
         }
     }
 
     result = search_query(q, 'event')
 
-    corpus = [b['key'] for b in result['aggregations']['corpus']['buckets']]
-
+    corpus = []
     statistics = {}
 
-    for title_id in corpus:
+    for b in result['aggregations']['corpus']['buckets']:
+        title_id = b['key']
+        corpus.append(title_id)
         statistics[title_id] = []
+        statistics[title_id].append({
+            'category': 'basics',
+            'id': title_id,
+            'num_words': b['num_words']['value']
+        })
+
+    for title_id in corpus:
 
         for cat in categories:
             q = term_query('text_id', title_id)

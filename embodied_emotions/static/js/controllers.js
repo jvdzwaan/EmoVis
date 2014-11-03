@@ -19,12 +19,16 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     $scope.mainCat = '';
     $scope.compareWith = [];
     $scope.statistics = [];
-    $scope.corpusStatistics = {};
+    $scope.entityStatistics = {};
 
     $http.get('entity_vis/entity_categories').success(function (data){
         $scope.categories = data.hits.hits;
         console.log($scope.categories);
     });
+    $http.get('corpus/entity_stats').success(function (data){
+        $scope.entityStatistics = data;
+    });
+
 
     $scope.searchFn = function (value, index){
         if( !$scope.query ){ return false; }
@@ -77,7 +81,7 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
         $http.post('corpus/entity_stats/', {categories: categories}).
             success(function (data){
                 console.log(data);
-                $scope.corpusStatistics = data;
+                $scope.entityStatistics = data;
         });
     }
 });

@@ -82,10 +82,12 @@
                                             <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
                                         </tr>
                                     </thead>
-                                    <tr ng-repeat="(title, stats) in corpusStatistics">
-                                        <td>{% verbatim %}{{ title }}{% endverbatim %}</td>
-                                        <td>{% verbatim %}{{ stats[0].num_words }}{% endverbatim %}</td>
-                                        <td ng-repeat="cat in stats">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</td>
+                                    <tr ng-repeat="(textId, stats) in entityStatistics">
+                                        <td>{% verbatim %}{{ textId }}{% endverbatim %}</td>
+                                        <td ng-repeat="cat in stats">
+                                            <span ng-show="cat.category=='basics'">{% verbatim %}{{ cat.num_words }}{% endverbatim %}</span>
+                                            <span ng-show="cat.category!='basics'">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</span>
+                                        </td>
                                     </tr>
                                 </table>
                                 {% block content %}{% endblock %}
