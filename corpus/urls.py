@@ -17,4 +17,6 @@ urlpatterns = patterns('',
         name='entity_statistics_for_corpus'),
     url(r'^entity_stats/(?P<title_id>\w+)/$',
         views.entity_statistics_for_title, name='entity_statistics_for_title'),
+    url(r'^subgenre_stats/$', views.subgenre_entity_statistics_for_corpus,
+        name='subgenre_entity_statistics_for_corpus'),
 )

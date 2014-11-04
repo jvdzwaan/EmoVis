@@ -228,6 +228,90 @@ def entity_statistics_for_corpus(request):
     return JsonResponse(statistics, safe=False)
 
 
+def subgenre_entity_statistics_for_corpus(request):
+    # angular sends post data in the request.body
+    if request.body:
+        categories = json.loads(request.body).get('categories')
+    else:
+        categories = []
+
+    # corpus = all titles in elasticsearch
+    q = match_all()
+    q["aggs"] = {
+        "corpus": {
+            "terms": {
+                "field": "subgenre",
+                "order": {"num_texts": "desc"},
+                "size": 1000
+            },
+            "aggs": {
+                "num_texts": {
+                    "cardinality": {
+                        "field": "text_id"
+                    }
+                }
+            }
+        }
+    }
+
+    result = search_query(q, 'event')
+
+    corpus = []
+    statistics = {}
+
+    for b in result['aggregations']['corpus']['buckets']:
+        subgenre = b['key']
+        corpus.append(subgenre)
+        statistics[subgenre] = []
+        statistics[subgenre].append({
+            'category': 'basics',
+            'id': subgenre,
+            'num_texts': b['num_texts']['value']
+        })
+
+    for subgenre in corpus:
+
+        for cat in categories:
+            q = term_query('subgenre', subgenre)
+            q["aggregations"] = {
+                "ent_words": {
+                    "terms": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                        "size": 25
+                    }
+                },
+                "cat_count": {
+                    "value_count": {
+                        "field": "liwc-entities.data.{}".format(cat),
+                    }
+                },
+                "num_words": {
+                    "sum": {
+                        "field": "num_words"
+                    }
+                }
+            }
+
+            result = search_query(q, 'event')
+
+            print result
+
+            num_cat = result.get('aggregations').get('cat_count').get('value')
+            num_wrds = result.get('aggregations').get('num_words').get('value')
+            percentage = float(num_cat)/float(num_wrds)*100
+            ents = result.get('aggregations').get('ent_words').get('buckets')
+
+            statistics[subgenre].append({
+                'category': cat,
+                'num_cat': num_cat,
+                'num_words': num_wrds,
+                'percentage': percentage,
+                'entity_words': ents
+            })
+
+    return JsonResponse(statistics, safe=False)
+
+
 def show_author(request, author_id):
     author = get_object_or_404(Auteur, pk=author_id)
 
