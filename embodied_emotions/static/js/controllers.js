@@ -20,6 +20,7 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     $scope.compareWith = [];
     $scope.statistics = [];
     $scope.entityStatistics = {};
+    $scope.subgenreStatistics = {};
 
     $http.get('entity_vis/entity_categories').success(function (data){
         $scope.categories = data.hits.hits;
@@ -27,6 +28,10 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     });
     $http.get('corpus/entity_stats').success(function (data){
         $scope.entityStatistics = data;
+    });
+    $http.get('corpus/subgenre_stats').success(function (data){
+        $scope.subgenreStatistics = data;
+        console.log($scope.subgenreStatistics);
     });
 
 
