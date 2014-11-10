@@ -34,6 +34,12 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
         console.log($scope.subgenreStatistics);
     });
 
+    $scope.$watch('mainCat', function() {
+        $scope.getEntityStatisticsCorpus();
+    });
+    $scope.$watch('compareWith', function() {
+        $scope.getEntityStatisticsCorpus();
+    }, true);
 
     $scope.searchFn = function (value, index){
         if( !$scope.query ){ return false; }
@@ -42,26 +48,24 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     }
     $scope.setMainCat = function(cat) {
         $scope.mainCat = cat;
-        $scope.getEntityStatisticsTitle($routeParams.titleId);
-        $scope.getEntityStatisticsCorpus();
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.removeMainCat = function() {
         $scope.mainCat = '';
-        $scope.getEntityStatisticsTitle($routeParams.titleId);
-        $scope.getEntityStatisticsCorpus();
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.addToCompareWith = function(cat) {
         if($scope.compareWith.indexOf(cat) == -1){
             $scope.compareWith.push(cat);
         }
-        $scope.getEntityStatisticsTitle($routeParams.titleId);
-        $scope.getEntityStatisticsCorpus();
+        console.log('add to compareWith '+cat);
+        console.log($scope.compareWith);
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.removeFromCompareWith = function(cat) {
         var i = $scope.compareWith.indexOf(cat);
         $scope.compareWith.splice(i, 1);
-        $scope.getEntityStatisticsTitle($routeParams.titleId);
-        $scope.getEntityStatisticsCorpus();
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.getEntityStatisticsTitle = function(title_id){
         if($scope.mainCat){
