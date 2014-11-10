@@ -1,0 +1,37 @@
+<div ng-controller="CorpusCtrl"> 
+    <table class="table table-striped" ng-show="entityStatistics">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th># words</th>
+                <th ng-show="mainCat">{{ mainCat }} words</th>
+                <th ng-repeat="cat in compareWith">{{ cat }} words</th>
+            </tr>
+        </thead>
+        <tr ng-repeat="(textId, stats) in entityStatistics">
+            <td><a ng-href="/corpus/{{ textId }}">{{ textId }}</a></td>
+            <td ng-repeat="cat in stats">
+                <span ng-show="cat.category=='basics'">{{ cat.num_words }}</span>
+                <span ng-show="cat.category!='basics'">{{ cat.percentage | number:2 }}</span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-striped" ng-show="subgenreStatistics">
+        <thead>
+            <tr>
+                <th>Subgenre</th>
+                <th># texts</th>
+                <th ng-show="mainCat">{{ mainCat }} words</th>
+                <th ng-repeat="cat in compareWith">{{ cat }} words</th>
+            </tr>
+        </thead>
+        <tr ng-repeat="(subgenre, stats) in subgenreStatistics">
+            <td>{{ subgenre }}</td>
+            <td ng-repeat="cat in stats">
+                <span ng-show="cat.category=='basics'">{{ cat.num_texts }}</span>
+                <span ng-show="cat.category!='basics'">{{ cat.percentage | number:2 }}</span>
+            </td>
+        </tr>
+    </table>
+</div>
