@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <title>{% block title %}{% endblock %}</title>
 
+        <base href="/">
+
         <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
         <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}">
 
@@ -29,6 +31,7 @@
     </head>
     <body>
         <script type="text/javascript" src="{% static 'angular/angular.js'%}" charset="utf-8"></script>
+        <script type="text/javascript" src="{% static 'angular-route/angular-route.js'%}" charset="utf-8"></script>
 
         <div class="container-fluid" ng-controller="EntitiesCtrl">
             <div class="row">
@@ -70,6 +73,42 @@
                                 </span>
                             </div>
                             <div>
+                                <table class="table table-striped" ng-show="entityStatistics">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th># words</th>
+                                            <th ng-show="mainCat">% {% verbatim %}{{ mainCat }}{% endverbatim %} words</th>
+                                            <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat="(textId, stats) in entityStatistics">
+                                        <td>{% verbatim %}{{ textId }}{% endverbatim %}</td>
+                                        <td ng-repeat="cat in stats">
+                                            <span ng-show="cat.category=='basics'">{% verbatim %}{{ cat.num_words }}{% endverbatim %}</span>
+                                            <span ng-show="cat.category!='basics'">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</span>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <table class="table table-striped" ng-show="subgenreStatistics">
+                                    <thead>
+                                        <tr>
+                                            <th>Subgenre</th>
+                                            <th># texts</th>
+                                            <th ng-show="mainCat">% {% verbatim %}{{ mainCat }}{% endverbatim %} words</th>
+                                            <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat="(subgenre, stats) in subgenreStatistics">
+                                        <td>{% verbatim %}{{ subgenre }}{% endverbatim %}</td>
+                                        <td ng-repeat="cat in stats">
+                                            <span ng-show="cat.category=='basics'">{% verbatim %}{{ cat.num_texts }}{% endverbatim %}</span>
+                                            <span ng-show="cat.category!='basics'">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</span>
+                                        </td>
+                                    </tr>
+                                </table>
+
                                 {% block content %}{% endblock %}
                             </div>
                         </div>

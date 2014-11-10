@@ -1,4 +1,9 @@
+{% extends 'base.html' %}
 {% load corpus_extras %}
+
+{% block title %}{{ title.titel }}{% endblock %}
+
+{% block content %}
 <h1>{{ title.titel }}</h1>
 <p>Door:
     {% for author in title.auteurs.all %}
@@ -22,3 +27,14 @@
         {% subgenre_link subgenre %} </br>
     {% endfor %}
 </p>
+
+<div ng-show="statistics">
+    <h2>Statistics</h2>
+    <p ng-repeat="stats in statistics">
+        {% verbatim %}
+            # words: {{ stats.num_words }}
+            # {{ stats.category }} words: {{ stats.num_cat }}
+            Percentage {{ stats.category }}: {{ stats.percentage }}
+        {% endverbatim %}
+    </p>
+{% endblock %}

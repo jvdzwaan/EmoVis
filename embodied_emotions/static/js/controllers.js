@@ -1,15 +1,45 @@
-var embEmApp = angular.module('embEmApp', []);
+var embEmApp = angular.module('embEmApp', ['ngRoute']);
 
-embEmApp.controller('EntitiesCtrl', function ($scope, $http){
+embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
+    // set csrftoken for Django
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+
+    // get params from the url
+    $routeProvider.when('/corpus/title/:titleId/', {
+        controller: 'EntitiesCtrl'
+    });
+
+    $locationProvider.html5Mode(true);
+});
+
+embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $location, $http){
     $scope.query = '';
     $scope.results = [];
     $scope.mainCat = '';
     $scope.compareWith = [];
-    var sites_url = 'data/sites.json';
-    $http.get('entity_categories').success(function (data){
+    $scope.statistics = [];
+    $scope.entityStatistics = {};
+    $scope.subgenreStatistics = {};
+
+    $http.get('entity_vis/entity_categories').success(function (data){
         $scope.categories = data.hits.hits;
         console.log($scope.categories);
     });
+    $http.get('corpus/entity_stats').success(function (data){
+        $scope.entityStatistics = data;
+    });
+    $http.get('corpus/subgenre_stats').success(function (data){
+        $scope.subgenreStatistics = data;
+        console.log($scope.subgenreStatistics);
+    });
+
+    $scope.$watch('mainCat', function() {
+        $scope.getEntityStatisticsCorpus();
+    });
+    $scope.$watch('compareWith', function() {
+        $scope.getEntityStatisticsCorpus();
+    }, true);
 
     $scope.searchFn = function (value, index){
         if( !$scope.query ){ return false; }
@@ -18,17 +48,49 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $http){
     }
     $scope.setMainCat = function(cat) {
         $scope.mainCat = cat;
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.removeMainCat = function() {
         $scope.mainCat = '';
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.addToCompareWith = function(cat) {
         if($scope.compareWith.indexOf(cat) == -1){
             $scope.compareWith.push(cat);
         }
+        console.log('add to compareWith '+cat);
+        console.log($scope.compareWith);
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
     }
     $scope.removeFromCompareWith = function(cat) {
         var i = $scope.compareWith.indexOf(cat);
         $scope.compareWith.splice(i, 1);
+        //$scope.getEntityStatisticsTitle($routeParams.titleId);
+    }
+    $scope.getEntityStatisticsTitle = function(title_id){
+        if($scope.mainCat){
+            var categories = [$scope.mainCat].concat($scope.compareWith);
+        } else {
+            var categories = $scope.compareWith;
+        }
+        console.log(categories);
+        $http.post('corpus/entity_stats/'+title_id+'/', {categories: categories}).
+            success(function (data){
+                console.log(data);
+                $scope.statistics = data;
+        });
+    }
+    $scope.getEntityStatisticsCorpus = function(){
+        if($scope.mainCat){
+            var categories = [$scope.mainCat].concat($scope.compareWith);
+        } else {
+            var categories = $scope.compareWith;
+        }
+        console.log(categories);
+        $http.post('corpus/entity_stats/', {categories: categories}).
+            success(function (data){
+                console.log(data);
+                $scope.entityStatistics = data;
+        });
     }
 });
