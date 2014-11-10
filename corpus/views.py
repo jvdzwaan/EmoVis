@@ -9,6 +9,9 @@ from entity_vis.es import search_query, match_all, term_query
 
 from models import Titel, Auteur, Titelxauteur, Genre, Subgenre, TitelBevat
 
+from rest_framework import generics
+from corpus.serializers import TitleSerializer
+
 _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01', 
     'bild002dich04', 'hoof001thes01', 'hare003agon01', 'asse001kwak01', 
     'bred001rodd01', 'nore003list01', 'moli015lubb02', 'beet004dich01', 
@@ -71,6 +74,22 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
     'tijs003wind01', 'stey002geve01', 'zasy001borg01', '_vla008vlae01'] 
 
 _trial_annotation_ids = ['feit007patr01', 'hoof002door01', 'vos_002mede03']
+
+
+class TitleViewSet(generics.ListAPIView):
+    """API endpoint returns a list of titles.
+    """
+    queryset = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel') \
+                    .order_by('jaar')
+    serializer_class = TitleSerializer
+
+
+class TitleInstanceView(generics.RetrieveAPIView):
+    """API endpoint that returns a single title.
+    """
+    model = Titel
+    serializer_class = TitleSerializer
+
 
 def index(request):
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel') \
