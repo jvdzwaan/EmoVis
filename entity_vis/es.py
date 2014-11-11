@@ -24,14 +24,22 @@ def match_all():
     }
 
 
-def term_query(field, value):
-    return {
+def term_query(field, value, size=0):
+    q = {
         "query": {
             "term": {
                 field: {
                     "value": value
                 }
             }
-        },
-        "size": 0
+        }
     }
+    if size:
+        q["size"] = size
+
+    return q
+
+
+def doc_count(query, doc_type):
+    result = _es().count('embodied_emotions', doc_type=doc_type, body=query)
+    return result.get('count', 0)
