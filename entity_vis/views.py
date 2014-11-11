@@ -12,8 +12,19 @@ from entity_vis.es import search_query, term_query, doc_count
 
 
 def entities_in_play(request, title_id):
+    # angular sends post data in the request.body
+    if request.body:
+        categories = json.loads(request.body).get('categories')
+    else:
+        categories = []
+
+    if len(categories) < 2:
+        return JsonResponse({})
+
+    entity_cat1 = categories[0]
+    entity_cat2 = categories[1]
+
     entity_type = 'liwc'
-    entity_cat = 'Posemo'
 
     q = term_query('text_id', title_id)
 
@@ -41,15 +52,33 @@ def entities_in_play(request, title_id):
         values = []
         for hit in result.get('hits').get('hits'):
             field = '{}-entities'.format(entity_type)
-            entity_data = hit.get('_source').get(field).get('data') \
-                             .get(entity_cat, [])
+            entity_data1 = hit.get('_source').get(field).get('data') \
+                              .get(entity_cat1, [])
+            entity_data2 = hit.get('_source').get(field).get('data') \
+                              .get(entity_cat2, [])
             char = hit.get('_source').get('actor')
             turn = hit.get('_source').get('order')
-            if char == name and entity_data:
-                score = len(entity_data)
+            if char == name and entity_data1:
+                score1 = len(entity_data1)
             else:
-                score = 0
-            values.append({'turn': turn, 'Score': score})
+                score1 = 0
+
+            if char == name and entity_data2:
+                score2 = len(entity_data2)
+            else:
+                score2 = 0
+            score = get_r_score(score1, score2)
+            values.append(score)
+
+        # smoothing
+        scores = moving_average(values, 10).tolist()
+
+        values = []
+        turn = 1
+        for sc in scores:
+            values.append({'turn': turn, 'Score': sc})
+            turn += 1
+
         data.append({'key': name, 'values': values})
 
     return JsonResponse(data, safe=False)
