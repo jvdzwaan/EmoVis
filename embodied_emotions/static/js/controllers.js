@@ -91,6 +91,7 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
     $scope.titleId = $routeParams.titleId;
     $scope.statistics = {};
+    $scope.selectedCats = $scope.getSelectedCategories();
 
     $http.get('corpus/titles/'+$scope.titleId).success(function (data){
         $scope.title = data;
@@ -109,10 +110,12 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
     });
     
     $scope.$watch('mainCat', function() {
+        $scope.selectedCats = $scope.getSelectedCategories();
         $scope.getEntityStatisticsTitle();
         $scope.updateChartData();
     });
     $scope.$watch('compareWith', function() {
+        $scope.selectedCats = $scope.getSelectedCategories();
         $scope.getEntityStatisticsTitle();
         $scope.updateChartData();
     }, true);
