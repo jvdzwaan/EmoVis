@@ -132,4 +132,11 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
             return d.Score;
         }
     };
+    $scope.colorFunction = function(){
+        // use d3's category10 colors
+        var color = d3.scale.category10();
+        return function(d, i){
+            return color(d.key);
+        };
+    }
 });
