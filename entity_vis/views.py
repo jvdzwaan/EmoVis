@@ -19,7 +19,7 @@ def entities_in_play(request, title_id):
         categories = []
 
     if len(categories) < 2:
-        return JsonResponse({})
+        return JsonResponse([], safe=False)
 
     entity_cat1 = categories[0]
     entity_cat2 = categories[1]
