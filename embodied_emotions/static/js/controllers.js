@@ -1,4 +1,4 @@
-var embEmApp = angular.module('embEmApp', ['ngRoute']);
+var embEmApp = angular.module('embEmApp', ['ngRoute', 'nvd3ChartDirectives']);
 
 embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     // set csrftoken for Django
@@ -91,6 +91,7 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
     $scope.titleId = $routeParams.titleId;
     $scope.statistics = {};
+    $scope.selectedCats = $scope.getSelectedCategories();
 
     $http.get('corpus/titles/'+$scope.titleId).success(function (data){
         $scope.title = data;
@@ -102,12 +103,21 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         console.log(data);
         $scope.statistics = data;
     });
+    $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
+        success(function (data){
+        console.log(data);
+        $scope.chartData = data;
+    });
     
     $scope.$watch('mainCat', function() {
+        $scope.selectedCats = $scope.getSelectedCategories();
         $scope.getEntityStatisticsTitle();
+        $scope.updateChartData();
     });
     $scope.$watch('compareWith', function() {
+        $scope.selectedCats = $scope.getSelectedCategories();
         $scope.getEntityStatisticsTitle();
+        $scope.updateChartData();
     }, true);
 
     $scope.getEntityStatisticsTitle = function() {
@@ -116,5 +126,30 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
             console.log(data);
             $scope.statistics = data;
         });
+    }
+    $scope.updateChartData = function(){
+        $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
+            success(function (data){
+            console.log(data);
+            $scope.chartData = data;
+    });
+        
+    }
+    $scope.xFunction = function(){
+        return function(d){
+            return d.turn;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            return d.Score;
+        }
+    };
+    $scope.colorFunction = function(){
+        // use d3's category10 colors
+        var color = d3.scale.category10();
+        return function(d, i){
+            return color(d.key);
+        };
     }
 });

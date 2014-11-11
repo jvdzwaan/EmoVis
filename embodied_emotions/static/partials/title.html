@@ -30,5 +30,20 @@
             <td ng-repeat="stats in statistics">{{ stats.percentage | number:2 }}</td>
         </tr>
     </table>
-
+    
+    <h2>Graph</h2>
+    <div ng-show="selectedCats[1]">{{ selectedCats[0] }} vs. {{ selectedCats[1] }}</div>
+    <nvd3-line-chart
+        data="chartData"
+        width="1500"
+        height="500"
+        showXAxis="true"
+        showYAxis="true"
+        x="xFunction()"
+        y="yFunction()"
+        isArea="false"
+        color="colorFunction()"
+        legendColor="colorFunction()"
+        showLegend="true">
+    </nvd3-line-chart>
 </div>

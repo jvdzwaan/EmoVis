@@ -8,7 +8,7 @@
 
         <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
         <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}">
-
+        <link rel="stylesheet" href="{% static 'nvd3/nv.d3.css' %}"/>
         <script type="text/javascript" src="{% static 'd3/d3.min.js'%}" charset="utf-8"></script>
         <script type="text/javascript" src="{% static 'js/stacked-bar-chart.js'%}" charset="utf-8"></script>
         <style>
@@ -32,7 +32,9 @@
     <body>
         <script type="text/javascript" src="{% static 'angular/angular.js'%}" charset="utf-8"></script>
         <script type="text/javascript" src="{% static 'angular-route/angular-route.js'%}" charset="utf-8"></script>
-
+        <script src="{% static 'd3/d3.js' %}"></script>
+        <script src="{% static 'nvd3/nv.d3.js' %}"></script>
+        <script src="{% static 'angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js' %}"></script>
         <div class="container-fluid" ng-controller="EntitiesCtrl">
             <div class="row">
                 <div class="col-xs-3">

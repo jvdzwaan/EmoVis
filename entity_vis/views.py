@@ -8,77 +8,80 @@ from django.http import JsonResponse
 from corpus.models import Titel
 from entity_vis.models import Character, EntityScore, SpeakingTurn
 from entity_vis.entitysc import get_r_score, moving_average
-from entity_vis.es import search_query
+from entity_vis.es import search_query, term_query, doc_count
 
 
-def entities_in_play(request):
-    title_id = 'feit007patr01'
-    title = get_object_or_404(Titel, pk=title_id)
+def entities_in_play(request, title_id):
+    # angular sends post data in the request.body
+    if request.body:
+        categories = json.loads(request.body).get('categories')
+    else:
+        categories = []
 
-    characters = Character.objects.filter(play=title) \
-                                  .order_by('-num_speaking_turns')[0:5]
+    if len(categories) < 2:
+        return JsonResponse([], safe=False)
 
-    ent_class_1 = 'liwc-Posemo'
-    ent_class_2 = 'liwc-Negemo'
+    entity_cat1 = categories[0]
+    entity_cat2 = categories[1]
 
-    speakingturns = SpeakingTurn.objects.filter(character__play=title) \
-                                        .order_by('order')
+    entity_type = 'liwc'
 
-    result = {}
-    for character in characters:
-        result[character.name] = []
+    q = term_query('text_id', title_id)
 
-    for sp in speakingturns:
-        for character in characters:
-            if sp.character == character:
-                try:
-                    esc1 = EntityScore.objects.get(Q(speakingturn=sp),
-                                                   Q(entity__name=ent_class_1))
-                except EntityScore.DoesNotExist:
-                    esc1 = None
+    # doc count
+    num_results = doc_count(q, 'event')
 
-                try:
-                    esc2 = EntityScore.objects.get(Q(speakingturn=sp),
-                                                   Q(entity__name=ent_class_2))
-                except EntityScore.DoesNotExist:
-                    esc2 = None
-
-                result[character.name].append(get_r_score(esc1, esc2))
-            else:
-                result[character.name].append(0.0)
-
-    # smooth results
-    n = 3
+    # characters
+    q = term_query('text_id', title_id, num_results)
+    q["sort"] = [{"order": {"order": "asc"}}]
+    q["aggs"] = {
+        "characters": {
+            "terms": {
+                "field": "actor",
+                "size": 5
+            }
+        }
+    }
+    result = search_query(q, 'event')
 
     data = []
+
+    characters = result.get('aggregations').get('characters').get('buckets')
     for character in characters:
-        scores = moving_average(result[character.name], n).tolist()
+        name = character.get('key')
         values = []
-        count = 1
-        for score in scores:
-            values.append({
-                'Turn': count,
-                'score': score
-            })
-            count += 1
+        for hit in result.get('hits').get('hits'):
+            field = '{}-entities'.format(entity_type)
+            entity_data1 = hit.get('_source').get(field).get('data') \
+                              .get(entity_cat1, [])
+            entity_data2 = hit.get('_source').get(field).get('data') \
+                              .get(entity_cat2, [])
+            char = hit.get('_source').get('actor')
+            turn = hit.get('_source').get('order')
+            if char == name and entity_data1:
+                score1 = len(entity_data1)
+            else:
+                score1 = 0
 
-        data.append({
-            'name': character.name,
-            'values': values
-        })
+            if char == name and entity_data2:
+                score2 = len(entity_data2)
+            else:
+                score2 = 0
+            score = get_r_score(score1, score2)
+            values.append(score)
 
-    context = {
-        'title_id': title.ti_id,
-        'title': title.titel,
-        'year': title.jaar,
-        'authors': [a.voornaam+' '+a.achternaam for a in title.auteurs.all()],
-        'genres': [genre.genre for genre in title.genres.all()],
-        'subgenres': [subgenre.subgenre for subgenre in title.subgenres.all()],
-        'data': json.dumps(data),
-        'speakingturns': speakingturns
-    }
+        # smoothing
+        scores = moving_average(values, 10).tolist()
 
-    return render(request, 'entity_vis/index.html', context)
+        values = []
+        turn = 1
+        for sc in scores:
+            values.append({'turn': turn, 'Score': sc})
+            turn += 1
+
+        data.append({'key': name, 'values': values})
+
+    return JsonResponse(data, safe=False)
 
 
 def browse_entities(request):
