@@ -30,5 +30,17 @@
             <td ng-repeat="stats in statistics">{{ stats.percentage | number:2 }}</td>
         </tr>
     </table>
-
+    
+    <h2>Graph</h2>
+    <nvd3-line-chart
+        data="chartData"
+        width="1500"
+        height="500"
+        showXAxis="true"
+        showYAxis="true"
+        x="xFunction()"
+        y="yFunction()"
+        isArea="false"
+        showLegend="true">
+    </nvd3-line-chart>
 </div>

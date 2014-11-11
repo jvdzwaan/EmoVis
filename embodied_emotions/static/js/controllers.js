@@ -1,4 +1,4 @@
-var embEmApp = angular.module('embEmApp', ['ngRoute']);
+var embEmApp = angular.module('embEmApp', ['ngRoute', 'nvd3ChartDirectives']);
 
 embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     // set csrftoken for Django
@@ -102,6 +102,11 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         console.log(data);
         $scope.statistics = data;
     });
+    $http.post('entity_vis/', {categories: $scope.getSelectedCategories()}).
+        success(function (data){
+        console.log(data);
+        $scope.chartData = data;
+    });
     
     $scope.$watch('mainCat', function() {
         $scope.getEntityStatisticsTitle();
@@ -117,4 +122,14 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
             $scope.statistics = data;
         });
     }
+    $scope.xFunction = function(){
+        return function(d){
+            return d.turn;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            return d.Score;
+        }
+    };
 });
