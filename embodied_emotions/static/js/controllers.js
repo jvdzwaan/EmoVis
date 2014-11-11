@@ -79,6 +79,12 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
                 console.log(data);
                 $scope.entityStatistics = data;
         });
+
+        $http.post('corpus/subgenre_stats/', {categories: $scope.getSelectedCategories()}).
+            success(function (data){
+                console.log(data);
+                $scope.subgenreStatistics = data;
+        });
     }
 });
 
