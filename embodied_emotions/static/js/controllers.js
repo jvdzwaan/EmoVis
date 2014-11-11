@@ -110,9 +110,11 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
     
     $scope.$watch('mainCat', function() {
         $scope.getEntityStatisticsTitle();
+        $scope.updateChartData();
     });
     $scope.$watch('compareWith', function() {
         $scope.getEntityStatisticsTitle();
+        $scope.updateChartData();
     }, true);
 
     $scope.getEntityStatisticsTitle = function() {
@@ -121,6 +123,14 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
             console.log(data);
             $scope.statistics = data;
         });
+    }
+    $scope.updateChartData = function(){
+        $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
+            success(function (data){
+            console.log(data);
+            $scope.chartData = data;
+    });
+        
     }
     $scope.xFunction = function(){
         return function(d){
