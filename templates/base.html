@@ -72,44 +72,7 @@
                                     <button class="btn btn-link" ng-click="removeFromCompareWith(cat)" title="Remove category to compare with"><span class="glyphicon glyphicon-remove-circle"></span></button>
                                 </span>
                             </div>
-                            <div>
-                                <table class="table table-striped" ng-show="entityStatistics">
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th># words</th>
-                                            <th ng-show="mainCat">% {% verbatim %}{{ mainCat }}{% endverbatim %} words</th>
-                                            <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
-                                        </tr>
-                                    </thead>
-                                    <tr ng-repeat="(textId, stats) in entityStatistics">
-                                        <td>{% verbatim %}{{ textId }}{% endverbatim %}</td>
-                                        <td ng-repeat="cat in stats">
-                                            <span ng-show="cat.category=='basics'">{% verbatim %}{{ cat.num_words }}{% endverbatim %}</span>
-                                            <span ng-show="cat.category!='basics'">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</span>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table class="table table-striped" ng-show="subgenreStatistics">
-                                    <thead>
-                                        <tr>
-                                            <th>Subgenre</th>
-                                            <th># texts</th>
-                                            <th ng-show="mainCat">% {% verbatim %}{{ mainCat }}{% endverbatim %} words</th>
-                                            <th ng-repeat="cat in compareWith">% {% verbatim %}{{ cat }}{% endverbatim %} words</th>
-                                        </tr>
-                                    </thead>
-                                    <tr ng-repeat="(subgenre, stats) in subgenreStatistics">
-                                        <td>{% verbatim %}{{ subgenre }}{% endverbatim %}</td>
-                                        <td ng-repeat="cat in stats">
-                                            <span ng-show="cat.category=='basics'">{% verbatim %}{{ cat.num_texts }}{% endverbatim %}</span>
-                                            <span ng-show="cat.category!='basics'">{% verbatim %}{{ cat.percentage | number:2 }}{% endverbatim %}</span>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                {% block content %}{% endblock %}
+                            <div ng-view>
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,34 @@
+<div ng-controller="TitleCtrl" ng-show="title">
+    <h1>{{ title.titel }}</h1>
+    <p>
+        Door: 
+        <span ng-repeat="author in title.auteurs">{{ author.voornaam }} {{ author.achternaam }}</span>
+    </p>
+    <p>
+        Jaar: {{ title.jaar }}
+    </p>
+    <p>
+        Genre(s):
+        <span ng-repeat="genre in title.genres">{{ genre.genre }}</span>
+    </p>
+    <p>
+        Subgenre(s):
+        <span ng-repeat="genre in title.subgenres">{{ genre.subgenre }}</span>
+    </p>
+
+    <h2>Statistics</h2>
+    <table class="table" ng-show="statistics">
+        <thead>
+            <tr>
+                <th># words</th>
+                <th ng-show="mainCat">{{ mainCat }} words</th>
+                <th ng-repeat="cat in compareWith">{{ cat }} words</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>{{ statistics[0].num_words }}</td>
+            <td ng-repeat="stats in statistics">{{ stats.percentage | number:2 }}</td>
+        </tr>
+    </table>
+
+</div>
