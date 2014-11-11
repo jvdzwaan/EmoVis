@@ -56,19 +56,6 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
         var i = $scope.compareWith.indexOf(cat);
         $scope.compareWith.splice(i, 1);
     }
-    $scope.getEntityStatisticsCorpus = function(){
-        if($scope.mainCat){
-            var categories = [$scope.mainCat].concat($scope.compareWith);
-        } else {
-            var categories = $scope.compareWith;
-        }
-        console.log(categories);
-        $http.post('corpus/entity_stats/', {categories: categories}).
-            success(function (data){
-                console.log(data);
-                $scope.entityStatistics = data;
-        });
-    }
     $scope.getSelectedCategories = function(){
         if($scope.mainCat){
             return [$scope.mainCat].concat($scope.compareWith);
@@ -86,6 +73,13 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
         $scope.getEntityStatisticsCorpus();
     }, true);
 
+    $scope.getEntityStatisticsCorpus = function(){
+        $http.post('corpus/entity_stats/', {categories: $scope.getSelectedCategories()}).
+            success(function (data){
+                console.log(data);
+                $scope.entityStatistics = data;
+        });
+    }
 });
 
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
