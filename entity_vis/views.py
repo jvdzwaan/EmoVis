@@ -11,8 +11,7 @@ from entity_vis.entitysc import get_r_score, moving_average
 from entity_vis.es import search_query, term_query, doc_count
 
 
-def entities_in_play(request):
-    title_id = 'alew001besl01'
+def entities_in_play(request, title_id):
     entity_type = 'liwc'
     entity_cat = 'Posemo'
 

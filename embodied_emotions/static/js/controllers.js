@@ -102,7 +102,7 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         console.log(data);
         $scope.statistics = data;
     });
-    $http.post('entity_vis/', {categories: $scope.getSelectedCategories()}).
+    $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
         success(function (data){
         console.log(data);
         $scope.chartData = data;
