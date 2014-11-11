@@ -51,7 +51,7 @@ def entities_in_play(request):
             else:
                 score = 0
             values.append({'turn': turn, 'Score': score})
-        data.append({'name': name, 'values': values})
+        data.append({'key': name, 'values': values})
 
     return JsonResponse(data, safe=False)
 
