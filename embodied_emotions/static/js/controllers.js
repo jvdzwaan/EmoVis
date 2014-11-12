@@ -63,9 +63,22 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
             return $scope.compareWith;
         }
     }
+
+   $scope.colorFunction = function(){
+        // use d3's category10 colors
+        var color = d3.scale.category10();
+        return function(d, i){
+            return color(d.key);
+        };
+    }
 });
 
 embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $location, $http){
+    $http.get('entity_vis/subgenres_stats_time').success(function (data){
+        $scope.subgenreTimeData = data;
+        console.log($scope.subgenreTimeData);
+    });
+
     $scope.$watch('mainCat', function() {
         $scope.getEntityStatisticsCorpus();
     });
@@ -86,6 +99,17 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
                 $scope.subgenreStatistics = data;
         });
     }
+    $scope.xFunction = function(){
+        return function(d){
+            return d.year;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            return d.percentage;
+        }
+    };
+ 
 });
 
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
@@ -145,11 +169,6 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
             return d.Score;
         }
     };
-    $scope.colorFunction = function(){
-        // use d3's category10 colors
-        var color = d3.scale.category10();
-        return function(d, i){
-            return color(d.key);
-        };
-    }
+ 
+
 });
