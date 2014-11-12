@@ -14,4 +14,6 @@ urlpatterns = patterns(
     url(r'^browse_entities$', views.browse_entities, name='browse_entities'),
     url(r'^entity_categories$', views.entity_categories,
         name='entity_categories'),
+    url(r'^subgenres_stats_time/$', views.subgenres_stats_time,
+        name='subgenres_stats_time'),
 )

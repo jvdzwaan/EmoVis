@@ -313,8 +313,6 @@ def subgenre_entity_statistics_for_corpus(request):
 
             result = search_query(q, 'event')
 
-            print result
-
             num_cat = result.get('aggregations').get('cat_count').get('value')
             num_wrds = result.get('aggregations').get('num_words').get('value')
             percentage = float(num_cat)/float(num_wrds)*100

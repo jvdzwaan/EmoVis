@@ -8,8 +8,8 @@ from django.http import JsonResponse
 from corpus.models import Titel
 from entity_vis.models import Character, EntityScore, SpeakingTurn
 from entity_vis.entitysc import get_r_score, moving_average
-from entity_vis.es import search_query, term_query, doc_count
-
+from entity_vis.es import search_query, term_query, doc_count, match_all
+from embodied_emotions.utils import get_from_body
 
 def entities_in_play(request, title_id):
     # angular sends post data in the request.body
@@ -80,6 +80,90 @@ def entities_in_play(request, title_id):
             turn += 1
 
         data.append({'key': name, 'values': values})
+
+    return JsonResponse(data, safe=False)
+
+
+def subgenres_stats_time(request):
+    """Return data to draw subgenres over time for all categories.
+
+    Returns
+    -------
+    data : dict
+        The keys in data are the selected entity categories.
+        The values are an array of dicts (each dict provides the data about a
+        subgenre):
+        {
+            'key': 'subgenre name',
+            'values': [{
+                'x': x-value,
+                'y': y-value
+            }, ...]
+        }
+    """
+    categories = get_from_body(request, 'categories')
+
+    data = {}
+    for cat in categories:
+        # number of years in a bucket
+        interval = 20
+
+        q = match_all()
+        q["aggs"] = {
+            "subgenres": {
+                "terms": {
+                    "field": "subgenre",
+                    "size": 100
+                },
+                "aggs": {
+                    "subgenre-year": {
+                        "histogram": {
+                            "field": "year",
+                            "interval": interval,
+                            "min_doc_count": 0,
+                            "extended_bounds": {
+                                "min": 1600,
+                                "max": 1850
+                            }
+                        },
+                        "aggs": {
+                            "entities": {
+                                "value_count": {
+                                    "field": "liwc-entities.data.{}"
+                                             .format(cat)
+                                }
+                            },
+                            "num_words": {
+                                "sum": {
+                                    "field": "num_words"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        result = search_query(q, 'event')
+
+        # format output according to what is expected by nvd3
+        graph_data = []
+        subgenre_result = result.get('aggregations').get('subgenres') \
+                                .get('buckets')
+        for subgenre_data in subgenre_result:
+            subgenre = subgenre_data.get('key')
+            values = []
+            for year_data in subgenre_data.get('subgenre-year').get('buckets'):
+                year = year_data.get('key')
+                num_entities = year_data.get('entities').get('value')
+                num_words = year_data.get('num_words').get('value')
+                if num_words > 0:
+                    percentage = num_entities/num_words * 100.0
+                else:
+                    percentage = 0.0
+                values.append({'x': year, 'y': percentage})
+            graph_data.append({'key': subgenre, 'values': values})
+        data[cat] = graph_data
 
     return JsonResponse(data, safe=False)
 
