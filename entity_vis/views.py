@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from corpus.models import Titel
 from entity_vis.models import Character, EntityScore, SpeakingTurn
 from entity_vis.entitysc import get_r_score, moving_average
-from entity_vis.es import search_query, term_query, doc_count
+from entity_vis.es import search_query, term_query, doc_count, match_all
 
 
 def entities_in_play(request, title_id):
@@ -80,6 +80,66 @@ def entities_in_play(request, title_id):
             turn += 1
 
         data.append({'key': name, 'values': values})
+
+    return JsonResponse(data, safe=False)
+
+
+def subgenres_stats_time(request):
+    # number of years in a bucket
+    interval = 20
+
+    q = match_all()
+    q["aggs"] = {
+        "subgenres": {
+            "terms": {
+                "field": "subgenre",
+                "size": 100
+            },
+            "aggs": {
+                "subgenre-year": {
+                    "histogram": {
+                        "field": "year",
+                        "interval": interval,
+                        "min_doc_count": 0,
+                        "extended_bounds": {
+                            "min": 1600,
+                            "max": 1850
+                        }
+                    },
+                    "aggs": {
+                        "entities": {
+                            "value_count": {
+                                "field": "liwc-entities.data.Posemo"
+                            }
+                        },
+                        "num_words": {
+                            "sum": {
+                                "field": "num_words"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    result = search_query(q, 'event')
+    data = []
+    subgenre_result = result.get('aggregations').get('subgenres') \
+                            .get('buckets')
+    for subgenre_data in subgenre_result:
+        subgenre = subgenre_data.get('key')
+        values = []
+        for year_data in subgenre_data.get('subgenre-year').get('buckets'):
+            year = year_data.get('key')
+            num_entities = year_data.get('entities').get('value')
+            num_words = year_data.get('num_words').get('value')
+            if num_words > 0:
+                percentage = num_entities/num_words * 100.0
+            else:
+                percentage = 0.0
+            values.append({'year': year, 'percentage': percentage})
+        data.append({'key': subgenre, 'values': values})
 
     return JsonResponse(data, safe=False)
 
