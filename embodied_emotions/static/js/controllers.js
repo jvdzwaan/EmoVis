@@ -84,10 +84,6 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
 });
 
 embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $location, $http){
-    $http.get('entity_vis/subgenres_stats_time').success(function (data){
-        $scope.subgenreTimeData = data;
-        console.log($scope.subgenreTimeData);
-    });
 
     $scope.$watch('mainCat', function() {
         $scope.getEntityStatisticsCorpus();
@@ -108,6 +104,13 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
                 console.log(data);
                 $scope.subgenreStatistics = data;
         });
+
+        $http.post('entity_vis/subgenres_stats_time/', {categories: $scope.getSelectedCategories()}).
+            success(function (data){
+                $scope.subgenreTimeData = data;
+                console.log('subgenres_stats_time');
+                console.log($scope.subgenreTimeData);
+            });
     }
  
 });

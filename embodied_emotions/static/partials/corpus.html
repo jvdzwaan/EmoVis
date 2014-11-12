@@ -36,18 +36,23 @@
     </table>
    
     <h2>Percentages for subgenres over time</h2>
-    <nvd3-multi-bar-chart
-        data="subgenreTimeData"
-        width="1000"
-        height="300"
-        showXAxis="true"
-        showYAxis="true"
-        x="xFunction()"
-        y="yFunction()"
-        isArea="false"
-        color="colorFunction()"
-        legendColor="colorFunction()"
-        showLegend="true">
-    </nvd3-multi-bar-chart>
+    <div ng-repeat="(cat, data) in subgenreTimeData">
+        <h3>{{ cat }} over time</h3>
+        <nvd3-multi-bar-chart
+            id="subgenreTimeChart-{{ cat }}"
+            data="data"
+            width="1000"
+            height="300"
+            showXAxis="true"
+            showYAxis="true"
+            x="xFunction()"
+            y="yFunction()"
+            color="colorFunction()"
+            legendColor="colorFunction()"
+            showLegend="true">
+                <svg></svg>
+        </nvd3-multi-bar-chart>
+        Some text
+    </div>
 
 </div>
