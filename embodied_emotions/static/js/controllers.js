@@ -64,6 +64,16 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
         }
     }
 
+    $scope.xFunction = function(){
+        return function(d){
+            return d.x;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            return d.y;
+        }
+    };
    $scope.colorFunction = function(){
         // use d3's category10 colors
         var color = d3.scale.category10();
@@ -99,16 +109,6 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
                 $scope.subgenreStatistics = data;
         });
     }
-    $scope.xFunction = function(){
-        return function(d){
-            return d.year;
-        }
-    };
-    $scope.yFunction = function(){
-        return function(d){
-            return d.percentage;
-        }
-    };
  
 });
 

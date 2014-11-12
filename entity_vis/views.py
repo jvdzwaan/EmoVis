@@ -138,7 +138,7 @@ def subgenres_stats_time(request):
                 percentage = num_entities/num_words * 100.0
             else:
                 percentage = 0.0
-            values.append({'year': year, 'percentage': percentage})
+            values.append({'x': year, 'y': percentage})
         data.append({'key': subgenre, 'values': values})
 
     return JsonResponse(data, safe=False)
