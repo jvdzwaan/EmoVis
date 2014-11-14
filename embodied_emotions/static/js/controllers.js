@@ -20,7 +20,7 @@ embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
 embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $location, $http){
     $scope.query = '';
     $scope.mainCat = '';
-    $scope.compareWith = [];
+    $scope.compareWith = ['Posemo', 'Negemo'];
     $scope.entityStatistics = {};
     $scope.subgenreStatistics = {};
 
@@ -115,74 +115,17 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
  
 });
 
-embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
+embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDataService){
     $scope.titleId = $routeParams.titleId;
     $scope.statistics = {};
-    $scope.wordCloudData = [ 
-        {
-            "key": "waarheyt",
-            "doc_count": 10,
-            "score": 0.07493223057358994,
-            "bg_count": 10
-        },
-        {
-            "key": "wijsheyt",
-            "doc_count": 9,
-            "score": 0.06743900751623096,
-            "bg_count": 9
-        },
-        {
-            "key": "goedt",
-            "doc_count": 15,
-            "score": 0.061257775088170485,
-            "bg_count": 26
-        },
-        {
-            "key": "vruecht",
-            "doc_count": 8,
-            "score": 0.059945784458871935,
-            "bg_count": 8
-        },
-        {
-            "key": "goet",
-            "doc_count": 36,
-            "score": 0.053719266880172756,
-            "bg_count": 141
-        },
-        {
-            "key": "moytjes",
-            "doc_count": 8,
-            "score": 0.04705216176721062,
-            "bg_count": 10
-        },
-        {
-            "key": "segghen",
-            "doc_count": 16,
-            "score": 0.041271918358833336,
-            "bg_count": 41
-        },
-        {
-            "key": "moye",
-            "doc_count": 5,
-            "score": 0.03746611528679497,
-            "bg_count": 5
-        },
-        {
-            "key": "fray",
-            "doc_count": 4,
-            "score": 0.029972892229435968,
-            "bg_count": 4
-        },
-        {
-            "key": "waardich",
-            "doc_count": 4,
-            "score": 0.029972892229435968,
-            "bg_count": 4
-        }
-    ];
 
-   $scope.selectedCats = $scope.getSelectedCategories();
+    $scope.selectedCats = $scope.getSelectedCategories();
 
+    EmbEmDataService.getTitleWordcloudData($scope.titleId, $scope.selectedCats)
+        .then(function (data){
+            $scope.wordcloudData = data;
+        });
+    
     $http.get('corpus/titles/'+$scope.titleId).success(function (data){
         $scope.title = data;
         console.log($scope.title);
@@ -193,6 +136,7 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         console.log(data);
         $scope.statistics = data;
     });
+
     $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
         success(function (data){
         console.log(data);
@@ -236,5 +180,4 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         }
     };
  
-
 });
