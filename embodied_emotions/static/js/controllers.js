@@ -118,7 +118,70 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
     $scope.titleId = $routeParams.titleId;
     $scope.statistics = {};
-    $scope.selectedCats = $scope.getSelectedCategories();
+    $scope.wordCloudData = [ 
+        {
+            "key": "waarheyt",
+            "doc_count": 10,
+            "score": 0.07493223057358994,
+            "bg_count": 10
+        },
+        {
+            "key": "wijsheyt",
+            "doc_count": 9,
+            "score": 0.06743900751623096,
+            "bg_count": 9
+        },
+        {
+            "key": "goedt",
+            "doc_count": 15,
+            "score": 0.061257775088170485,
+            "bg_count": 26
+        },
+        {
+            "key": "vruecht",
+            "doc_count": 8,
+            "score": 0.059945784458871935,
+            "bg_count": 8
+        },
+        {
+            "key": "goet",
+            "doc_count": 36,
+            "score": 0.053719266880172756,
+            "bg_count": 141
+        },
+        {
+            "key": "moytjes",
+            "doc_count": 8,
+            "score": 0.04705216176721062,
+            "bg_count": 10
+        },
+        {
+            "key": "segghen",
+            "doc_count": 16,
+            "score": 0.041271918358833336,
+            "bg_count": 41
+        },
+        {
+            "key": "moye",
+            "doc_count": 5,
+            "score": 0.03746611528679497,
+            "bg_count": 5
+        },
+        {
+            "key": "fray",
+            "doc_count": 4,
+            "score": 0.029972892229435968,
+            "bg_count": 4
+        },
+        {
+            "key": "waardich",
+            "doc_count": 4,
+            "score": 0.029972892229435968,
+            "bg_count": 4
+        }
+    ];
+
+   $scope.selectedCats = $scope.getSelectedCategories();
 
     $http.get('corpus/titles/'+$scope.titleId).success(function (data){
         $scope.title = data;
