@@ -46,4 +46,10 @@
         legendColor="colorFunction()"
         showLegend="true">
     </nvd3-line-chart>
+
+    <h2>Word clouds</h2>
+    <div ng-repeat="(cat, data) in wordcloudData">
+        <h3>{{ cat }}</h3>
+        <wordcloud data=data></wordcloud>
+    </div>
 </div>

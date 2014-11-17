@@ -20,7 +20,7 @@ embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
 embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $location, $http){
     $scope.query = '';
     $scope.mainCat = '';
-    $scope.compareWith = [];
+    $scope.compareWith = ['Posemo', 'Negemo'];
     $scope.entityStatistics = {};
     $scope.subgenreStatistics = {};
 
@@ -115,11 +115,17 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
  
 });
 
-embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
+embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDataService){
     $scope.titleId = $routeParams.titleId;
     $scope.statistics = {};
+
     $scope.selectedCats = $scope.getSelectedCategories();
 
+    EmbEmDataService.getTitleWordcloudData($scope.titleId, $scope.selectedCats)
+        .then(function (data){
+            $scope.wordcloudData = data;
+        });
+    
     $http.get('corpus/titles/'+$scope.titleId).success(function (data){
         $scope.title = data;
         console.log($scope.title);
@@ -130,6 +136,7 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         console.log(data);
         $scope.statistics = data;
     });
+
     $http.post('entity_vis/entity_graph_title/'+$scope.titleId+'/', {categories: $scope.getSelectedCategories()}).
         success(function (data){
         console.log(data);
@@ -173,5 +180,4 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http){
         }
     };
  
-
 });

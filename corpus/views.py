@@ -5,7 +5,8 @@ from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 
-from entity_vis.es import search_query, match_all, term_query
+from entity_vis.es import search_query, match_all, term_query, wordcloud_data
+from embodied_emotions.utils import get_from_body
 
 from models import Titel, Auteur, Titelxauteur, Genre, Subgenre, TitelBevat
 
@@ -466,3 +467,15 @@ def show_first_year_of_publication(request):
     }
 
     return render(request, 'corpus/playscontain.html', context)
+
+
+def title_wordcloud(request, pk):
+    categories = get_from_body(request, 'categories')
+    if not categories:
+        categories = []
+    data = {}
+    for cat in categories:
+        wc_data = wordcloud_data(pk, cat)
+        if wc_data:
+            data[cat] = wc_data
+    return JsonResponse(data, safe=False)

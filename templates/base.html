@@ -34,6 +34,12 @@
         <script type="text/javascript" src="{% static 'angular/angular.js'%}" charset="utf-8"></script>
         <script type="text/javascript" src="{% static 'angular-route/angular-route.js'%}" charset="utf-8"></script>
         <script src="{% static 'd3/d3.js' %}"></script>
+
+        <!-- Wordcloud -->
+        <script src="{% static 'js/d3.layout.cloud.js' %}"></script>
+        <script src="{% static 'js/wordcloud.js' %}"></script>
+
+        <!-- Other graphs -->
         <script src="{% static 'nvd3/nv.d3.js' %}"></script>
         <script src="{% static 'angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js' %}"></script>
         <div class="container-fluid" ng-controller="EntitiesCtrl">
@@ -85,5 +91,7 @@
 
                 <script src="{% static 'bootstrap/dist/js/bootstrap.min.js'%}"></script>
                 <script src="{% static 'js/controllers.js' %}"></script>
+                <script src="{% static 'js/services.js' %}"></script>
+                <script src="{% static 'js/directives.js' %}"></script>
                 </body>
                 </html>

@@ -43,3 +43,21 @@ def term_query(field, value, size=0):
 def doc_count(query, doc_type):
     result = _es().count('embodied_emotions', doc_type=doc_type, body=query)
     return result.get('count', 0)
+
+
+def wordcloud_data(text_id, entity_cat):
+    q = term_query('text_id', text_id)
+    q["aggs"] = {
+        "top_terms": {
+            "terms": {
+                "field": 'liwc-entities.data.{}'.format(entity_cat),
+                "size": 25
+            }
+        }
+    }
+    result = search_query(q, 'event')
+    if result.get('took'):
+        data = result.get('aggregations').get('top_terms').get('buckets')
+    else:
+        data = []
+    return data
