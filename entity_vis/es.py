@@ -3,14 +3,15 @@
 
 from elasticsearch import Elasticsearch
 
+from django.conf import settings
+
 
 def _es():
-    # TODO: make es instance configurable (via settings.py)
     return Elasticsearch()
 
 
 def search_query(query, doc_type):
-    return _es().search('embodied_emotions', doc_type=doc_type, body=query)
+    return _es().search(settings.ES_INDEX, doc_type=doc_type, body=query)
 
 
 def match_all():
@@ -41,7 +42,7 @@ def term_query(field, value, size=0):
 
 
 def doc_count(query, doc_type):
-    result = _es().count('embodied_emotions', doc_type=doc_type, body=query)
+    result = _es().count(settings.ES_INDEX, doc_type=doc_type, body=query)
     return result.get('count', 0)
 
 

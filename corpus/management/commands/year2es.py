@@ -7,12 +7,14 @@ from elasticsearch import Elasticsearch, helpers
 from django.core.management.base import BaseCommand
 from corpus.models import Titel
 
+from django.conf import settings
+
 
 class Command(BaseCommand):
     help = 'Add year data for plays in the corpus to the ElasticSearch index.'
 
     def handle(self, *args, **options):
-        index_name = 'embodied_emotions'
+        index_name = settings.ES_INDEX
         doc_type = 'event'
 
         # Get text ids
