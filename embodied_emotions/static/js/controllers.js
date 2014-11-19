@@ -1,4 +1,6 @@
-var embEmApp = angular.module('embEmApp', ['ngRoute', 'nvd3ChartDirectives']);
+var embEmApp = angular.module('embEmApp', ['elasticsearch',
+                                           'ngRoute',
+                                           'nvd3ChartDirectives']);
 
 embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     // set csrftoken for Django
