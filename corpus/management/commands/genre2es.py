@@ -55,9 +55,12 @@ class Command(BaseCommand):
                 subgenres = subtitles[0].subgenres.all()
             else:
                 print '\tMultiple subtitles - unclear which one to choose'
-                for t in subtitles:
-                    print '\t', t
-                print 'Will not be saved to ElasticSearch.'
+                #for t in subtitles:
+                #    print '\t', t
+                #print 'Will not be saved to ElasticSearch.'
+                print '\tSticking to original data'
+                genres = title.genres.all()
+                subgenres = title.subgenres.all()
 
             if genres:
                 # get all events for text id

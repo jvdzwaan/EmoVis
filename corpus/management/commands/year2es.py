@@ -6,6 +6,7 @@ from elasticsearch import Elasticsearch, helpers
 
 from django.core.management.base import BaseCommand
 from corpus.models import Titel
+from corpus.utils import get_year
 
 from django.conf import settings
 
@@ -50,9 +51,13 @@ class Command(BaseCommand):
                 year = subtitles[0].jaar
             else:
                 print '\tMultiple subtitles - unclear which one to choose'
-                for t in subtitles:
-                    print '\t', t
-                print 'Will not be saved to ElasticSearch.'
+                #for t in subtitles:
+                #    print '\t', t
+                #print 'Will not be saved to ElasticSearch.'
+                print '\tSticking to original year'
+                year = title.jaar
+
+            year = get_year(year)
 
             if year:
                 print year
