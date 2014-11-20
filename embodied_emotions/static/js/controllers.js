@@ -14,6 +14,9 @@ embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     }).when('/corpus/:titleId/', {
         controller: 'TitleCtrl',
         templateUrl: 'static/partials/title.html'
+    }).when('/pairs/', {
+        controller: 'PairsCtrl',
+        templateUrl: 'static/partials/pairs.html'
     });
 
     $locationProvider.html5Mode(true);
@@ -182,4 +185,21 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDat
         }
     };
  
+});
+
+embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDataService, es){
+    $scope.search = function() {
+        es.search({
+            index: 'embem',
+            size: 50,
+            body: {
+                "query": {
+                    "match_all": {}   
+                }
+            }
+
+        }).then(function (response) {
+            $scope.hits = response.hits.hits;
+        });
+    }
 });

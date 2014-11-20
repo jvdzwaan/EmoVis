@@ -44,7 +44,7 @@
         <script src="{% static 'angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js' %}"></script>
 
         <!-- Elasticsearch -->
-        <script type="text/javascript" src="{% static 'elasticsearch/elasticsearch.angular.js'%}" charset="utf-8"></script>
+        <script type="text/javascript" src="{% static 'elasticsearch/elasticsearch.angular.js' %}" charset="utf-8"></script>
 
         <div class="container-fluid" ng-controller="EntitiesCtrl">
             <div class="row">
@@ -67,6 +67,7 @@
                             <div ng-if="results.length == 0" ng-cloak>No results.</div>
                         </div>
                     </div>
+                    <a ng-href="pairs/">Pairs</a>
                 </div>
                 <div class="col-xs-9">
                     <div class="row">

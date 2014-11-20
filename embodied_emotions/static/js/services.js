@@ -19,9 +19,6 @@ embEmApp.factory('EmbEmDataService', function ($http, $q) {
 
 });
 
-embEmApp.factory('esClient', ['esFactory', function (esFactory) {
-     return esFactory({
-         host: 'localhost:9200',
-         log: 'trace'
-     });
- }]);
+embEmApp.service('es', function(esFactory) {
+      return esFactory({ host: 'localhost:9200' });
+});

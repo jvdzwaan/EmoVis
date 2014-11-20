@@ -1,0 +1,8 @@
+<div ng-controller="PairsCtrl">
+    <button class="btn btn-default btn-sm" ng-click="search()">Search</button>
+    <ul ng-show='hits'>
+        <li ng-repeat="item in hits">
+            {{ item['_source']['text'] }}
+        </li>
+    </ul>
+</div>
