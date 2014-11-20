@@ -188,7 +188,17 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDat
 });
 
 embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDataService, es){
+    $scope.pairs = {};
+    $scope.pairs.intervalSize = 20;
+    $scope.pairs.data = [];
+
     $scope.getPairsData = function() {
+        if($scope.pairs.intervalSize <= 0) {
+            $scope.pairs.intervalSize = 20;
+        }
+
+        var pairLabel = $scope.pairs.pair+":"+$scope.pairs.intervalSize; 
+
         es.search({
             index: 'embem',
             size: 0,
@@ -196,7 +206,7 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
                 "query": {
                     "term": {
                         "pairs-Body-Posemo.data": {
-                            "value": "vry@vry"
+                            "value": $scope.pairs.pair
                         }
                     }
                 },
@@ -205,7 +215,7 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
                     "data": {
                         "histogram": {
                             "field": "year",
-                            "interval": 5,
+                            "interval": $scope.pairs.intervalSize,
                             "min_doc_count": 0,
                             "extended_bounds": {
                                 "min": 1600,
@@ -224,12 +234,12 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
             }
 
         }).then(function (response) {
-            $scope.pairsData = [{
-                "key": "vry@vry", 
+            console.log('Getting data');
+            $scope.pairs.data.push({
+                "key": pairLabel, 
                 "values": response.aggregations.data.buckets
-            }];
-            console.log('pairsData');
-            console.log($scope.pairsData);
+            });
+            console.log($scope.pairs.data);
         });
     }
     
@@ -240,8 +250,6 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
     };
     $scope.yFunction = function(){
         return function(d){
-            console.log('yFunction');
-            console.log(d);
             if (d.total.value == 0) {
                 return 0.0;
             }

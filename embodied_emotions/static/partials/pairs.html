@@ -1,14 +1,22 @@
 <div ng-controller="PairsCtrl">
-    <input type='number' ng-model='pairs.intervalSize'>
-    <button class="btn btn-default btn-sm" ng-click="getPairsData()">Get pairs data</button>
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="intervalSize">Interval</label>
+            <input type="number" ng-model="pairs.intervalSize" id="intervalSize">
+            <label for="pair">Pair</label>
+            <input ng-model="pairs.pair" id="pair">
+            <button class="btn btn-default btn-sm" ng-click="getPairsData()">Show</button>
+         </div>
+    </form>
     <nvd3-line-chart
-        data="pairsData"
+        data="pairs.data"
         width="1200"
         height="500"
         showXAxis="true"
         showYAxis="true"
         x="xFunction()"
         y="yFunction()"
+        objectEquality="true"
         isArea="false"
         color="colorFunction()"
         legendColor="colorFunction()"
