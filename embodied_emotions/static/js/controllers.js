@@ -188,18 +188,64 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDat
 });
 
 embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDataService, es){
-    $scope.search = function() {
+    $scope.getPairsData = function() {
         es.search({
             index: 'embem',
-            size: 50,
+            size: 0,
             body: {
                 "query": {
-                    "match_all": {}   
+                    "term": {
+                        "pairs-Body-Posemo.data": {
+                            "value": "vry@vry"
+                        }
+                    }
+                },
+                "size": 0,
+                "aggs": {
+                    "data": {
+                        "histogram": {
+                            "field": "year",
+                            "interval": 5,
+                            "min_doc_count": 0,
+                            "extended_bounds": {
+                                "min": 1600,
+                                "max": 1850
+                            }
+                        },
+                        "aggs": {
+                            "total": {
+                                "sum": {
+                                    "field": "pairs-Body-Posemo.num_pairs"
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
         }).then(function (response) {
-            $scope.hits = response.hits.hits;
+            $scope.pairsData = [{
+                "key": "vry@vry", 
+                "values": response.aggregations.data.buckets
+            }];
+            console.log('pairsData');
+            console.log($scope.pairsData);
         });
     }
+    
+    $scope.xFunction = function(){
+        return function(d){
+            return d.key;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            console.log('yFunction');
+            console.log(d);
+            if (d.total.value == 0) {
+                return 0.0;
+            }
+            return d.doc_count/d.total.value;
+        }
+    };
 });

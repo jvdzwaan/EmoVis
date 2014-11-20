@@ -1,8 +1,18 @@
 <div ng-controller="PairsCtrl">
-    <button class="btn btn-default btn-sm" ng-click="search()">Search</button>
-    <ul ng-show='hits'>
-        <li ng-repeat="item in hits">
-            {{ item['_source']['text'] }}
-        </li>
-    </ul>
+    <input type='number' ng-model='pairs.intervalSize'>
+    <button class="btn btn-default btn-sm" ng-click="getPairsData()">Get pairs data</button>
+    <nvd3-line-chart
+        data="pairsData"
+        width="1200"
+        height="500"
+        showXAxis="true"
+        showYAxis="true"
+        x="xFunction()"
+        y="yFunction()"
+        isArea="false"
+        color="colorFunction()"
+        legendColor="colorFunction()"
+        showLegend="true">
+            <svg class="remove-height"></svg>
+    </nvd3-line-chart>
 </div>
