@@ -8,6 +8,11 @@
             <button class="btn btn-default btn-sm" ng-click="getPairsData()">Show</button>
          </div>
     </form>
+    <span ng-repeat="p in pairs.pairs">
+        <span class="label label-primary">
+            {{ p }}
+        </span>&nbsp; 
+    </span>
     <nvd3-line-chart
         data="pairs.data"
         width="1200"

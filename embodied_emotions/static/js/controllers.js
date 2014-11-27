@@ -191,6 +191,7 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
     $scope.pairs = {};
     $scope.pairs.intervalSize = 20;
     $scope.pairs.data = [];
+    $scope.pairs.pairs = [];
 
     $scope.getPairsData = function() {
         if($scope.pairs.intervalSize <= 0) {
@@ -234,15 +235,14 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
             }
 
         }).then(function (response) {
-            console.log('Getting data');
             $scope.pairs.data.push({
                 "key": pairLabel, 
                 "values": response.aggregations.data.buckets
             });
-            console.log($scope.pairs.data);
+            $scope.pairs.pairs.push(pairLabel);
         });
     }
-    
+
     $scope.xFunction = function(){
         return function(d){
             return d.key;
