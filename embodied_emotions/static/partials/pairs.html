@@ -21,6 +21,7 @@
         showYAxis="true"
         x="xFunction()"
         y="yFunction()"
+        forcey="[0,0.5]"
         objectEquality="true"
         isArea="false"
         color="colorFunction()"
@@ -28,4 +29,26 @@
         showLegend="true">
             <svg class="remove-height"></svg>
     </nvd3-line-chart>
+
+    <h1>Per subgenre</h1>
+    <div ng-repeat="(pair, data) in pairs.genreData">
+        <h2>{{ pair }}</h2>
+        <nvd3-line-chart
+            id="subgenreTimeChart-{{ pair | clean}}"
+            data="data"
+            width="1200"
+            height="500"
+            showXAxis="true"
+            showYAxis="true"
+            x="xFunction()"
+            y="yFunction()"
+            forcey="[0,0.5]"
+            objectEquality="true"
+            isArea="false"
+            color="colorFunction()"
+            legendColor="colorFunction()"
+            showLegend="true">
+                <svg class="remove-height"></svg>
+        </nvd3-line-chart>
+    </div>
 </div>

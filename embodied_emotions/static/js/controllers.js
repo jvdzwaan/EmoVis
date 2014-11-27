@@ -192,14 +192,21 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
     $scope.pairs.intervalSize = 20;
     $scope.pairs.data = [];
     $scope.pairs.pairs = [];
+    $scope.pairs.genreData = {};
 
-    $scope.getPairsData = function() {
+    $scope.getPairsData = function () {
         if($scope.pairs.intervalSize <= 0) {
             $scope.pairs.intervalSize = 20;
         }
 
-        var pairLabel = $scope.pairs.pair+":"+$scope.pairs.intervalSize; 
+        var pairLabel = $scope.pairs.pair+":"+$scope.pairs.intervalSize;
 
+        $scope.getPairsDataCorpus(pairLabel);
+
+        $scope.getPairsDataGenre(pairLabel);
+    }
+
+    $scope.getPairsDataCorpus = function(pairLabel) {
         es.search({
             index: 'embem',
             size: 0,
@@ -243,6 +250,61 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
         });
     }
 
+    $scope.getPairsDataGenre = function(pairLabel) {
+        es.search({
+            index: 'embem',
+            size: 0,
+            body: {
+                "query": {
+                    "term": {
+                        "pairs-Body-Posemo.data": {
+                            "value": $scope.pairs.pair
+                        }
+                    }
+                },
+                "size": 0,
+                "aggs": {
+                    "subgenres": {
+                        "terms": {
+                            "field": "subgenre",
+                            "size": 100
+                        },
+                        "aggs": {
+                            "data": {
+                                "histogram": {
+                                    "field": "year",
+                                    "interval": $scope.pairs.intervalSize,
+                                    "min_doc_count": 0,
+                                    "extended_bounds": {
+                                        "min": 1600,
+                                        "max": 1850
+                                    }
+                                },
+                                "aggs": {
+                                    "total": {
+                                        "sum": {
+                                            "field": "pairs-Body-Posemo.num_pairs"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }).then(function (response) {
+            $scope.pairs.genreData[pairLabel] = []
+            data = response.aggregations.subgenres.buckets;
+            for(var i=0; i < data.length; i++) {
+                $scope.pairs.genreData[pairLabel].push({
+                    "key": data[i].key, 
+                    "values": data[i].data.buckets
+                });
+            }
+        });
+    }
+
     $scope.xFunction = function(){
         return function(d){
             return d.key;
@@ -256,4 +318,10 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
             return d.doc_count/d.total.value;
         }
     };
+});
+
+embEmApp.filter('clean', function() {
+      return function(input, clean) {
+          return input.replace(':', '').replace('@', '');
+      };
 });
