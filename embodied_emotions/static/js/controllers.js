@@ -318,8 +318,22 @@ embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDat
             return d.doc_count/d.total.value;
         }
     };
+
+    $scope.removePair = function(pairLabel) {
+        var i = $scope.pairs.pairs.indexOf(pairLabel);
+        $scope.pairs.pairs.splice(i, 1);
+
+        // remove from data
+        $scope.pairs.data = $scope.pairs.data.filter(function (el) {
+            return el.key !== pairLabel;
+        });
+
+        // remove from genre data
+        delete $scope.pairs.genreData[pairLabel];
+    }
 });
 
+// Filter to remove illegal character from html id attributes
 embEmApp.filter('clean', function() {
       return function(input, clean) {
           return input.replace(':', '').replace('@', '');

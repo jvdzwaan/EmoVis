@@ -9,8 +9,8 @@
          </div>
     </form>
     <span ng-repeat="p in pairs.pairs">
-        <span class="label label-primary">
-            {{ p }}
+        <span class="label label-default">
+            {{ p }} | <a ng-click="removePair(p)">X</a>
         </span>&nbsp; 
     </span>
     <nvd3-line-chart
