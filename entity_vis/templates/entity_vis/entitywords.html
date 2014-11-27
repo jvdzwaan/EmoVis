@@ -13,7 +13,7 @@
             <tr>
                 <th>{{ category }}</th><th>Frequency</th>
             </tr>
-            {% for v in values|slice:":25" %}
+            {% for v in values|slice:":50" %}
                 <tr>
                     <td>{{ v.key }}</td>
                     <td>{{ v.doc_count }}</td>

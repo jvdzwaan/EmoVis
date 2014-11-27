@@ -18,3 +18,7 @@ embEmApp.factory('EmbEmDataService', function ($http, $q) {
     }
 
 });
+
+embEmApp.service('es', function(esFactory) {
+      return esFactory({ host: 'localhost:9200' });
+});

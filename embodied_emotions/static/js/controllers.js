@@ -1,4 +1,6 @@
-var embEmApp = angular.module('embEmApp', ['ngRoute', 'nvd3ChartDirectives']);
+var embEmApp = angular.module('embEmApp', ['elasticsearch',
+                                           'ngRoute',
+                                           'nvd3ChartDirectives']);
 
 embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     // set csrftoken for Django
@@ -12,6 +14,9 @@ embEmApp.config(function($httpProvider, $routeProvider, $locationProvider){
     }).when('/corpus/:titleId/', {
         controller: 'TitleCtrl',
         templateUrl: 'static/partials/title.html'
+    }).when('/pairs/', {
+        controller: 'PairsCtrl',
+        templateUrl: 'static/partials/pairs.html'
     });
 
     $locationProvider.html5Mode(true);
@@ -180,4 +185,157 @@ embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDat
         }
     };
  
+});
+
+embEmApp.controller('PairsCtrl', function ($scope, $routeParams, $http, EmbEmDataService, es){
+    $scope.pairs = {};
+    $scope.pairs.intervalSize = 20;
+    $scope.pairs.data = [];
+    $scope.pairs.pairs = [];
+    $scope.pairs.genreData = {};
+
+    $scope.getPairsData = function () {
+        if($scope.pairs.intervalSize <= 0) {
+            $scope.pairs.intervalSize = 20;
+        }
+
+        var pairLabel = $scope.pairs.pair+":"+$scope.pairs.intervalSize;
+
+        $scope.getPairsDataCorpus(pairLabel);
+
+        $scope.getPairsDataGenre(pairLabel);
+    }
+
+    $scope.getPairsDataCorpus = function(pairLabel) {
+        es.search({
+            index: 'embem',
+            size: 0,
+            body: {
+                "query": {
+                    "term": {
+                        "pairs-Body-Posemo.data": {
+                            "value": $scope.pairs.pair
+                        }
+                    }
+                },
+                "size": 0,
+                "aggs": {
+                    "data": {
+                        "histogram": {
+                            "field": "year",
+                            "interval": $scope.pairs.intervalSize,
+                            "min_doc_count": 0,
+                            "extended_bounds": {
+                                "min": 1600,
+                                "max": 1850
+                            }
+                        },
+                        "aggs": {
+                            "total": {
+                                "sum": {
+                                    "field": "pairs-Body-Posemo.num_pairs"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }).then(function (response) {
+            $scope.pairs.data.push({
+                "key": pairLabel, 
+                "values": response.aggregations.data.buckets
+            });
+            $scope.pairs.pairs.push(pairLabel);
+        });
+    }
+
+    $scope.getPairsDataGenre = function(pairLabel) {
+        es.search({
+            index: 'embem',
+            size: 0,
+            body: {
+                "query": {
+                    "term": {
+                        "pairs-Body-Posemo.data": {
+                            "value": $scope.pairs.pair
+                        }
+                    }
+                },
+                "size": 0,
+                "aggs": {
+                    "subgenres": {
+                        "terms": {
+                            "field": "subgenre",
+                            "size": 100
+                        },
+                        "aggs": {
+                            "data": {
+                                "histogram": {
+                                    "field": "year",
+                                    "interval": $scope.pairs.intervalSize,
+                                    "min_doc_count": 0,
+                                    "extended_bounds": {
+                                        "min": 1600,
+                                        "max": 1850
+                                    }
+                                },
+                                "aggs": {
+                                    "total": {
+                                        "sum": {
+                                            "field": "pairs-Body-Posemo.num_pairs"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }).then(function (response) {
+            $scope.pairs.genreData[pairLabel] = []
+            data = response.aggregations.subgenres.buckets;
+            for(var i=0; i < data.length; i++) {
+                $scope.pairs.genreData[pairLabel].push({
+                    "key": data[i].key, 
+                    "values": data[i].data.buckets
+                });
+            }
+        });
+    }
+
+    $scope.xFunction = function(){
+        return function(d){
+            return d.key;
+        }
+    };
+    $scope.yFunction = function(){
+        return function(d){
+            if (d.total.value == 0) {
+                return 0.0;
+            }
+            return d.doc_count/d.total.value;
+        }
+    };
+
+    $scope.removePair = function(pairLabel) {
+        var i = $scope.pairs.pairs.indexOf(pairLabel);
+        $scope.pairs.pairs.splice(i, 1);
+
+        // remove from data
+        $scope.pairs.data = $scope.pairs.data.filter(function (el) {
+            return el.key !== pairLabel;
+        });
+
+        // remove from genre data
+        delete $scope.pairs.genreData[pairLabel];
+    }
+});
+
+// Filter to remove illegal character from html id attributes
+embEmApp.filter('clean', function() {
+      return function(input, clean) {
+          return input.replace(':', '').replace('@', '');
+      };
 });

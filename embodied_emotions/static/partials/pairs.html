@@ -1,0 +1,54 @@
+<div ng-controller="PairsCtrl">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="intervalSize">Interval</label>
+            <input type="number" ng-model="pairs.intervalSize" id="intervalSize">
+            <label for="pair">Pair</label>
+            <input ng-model="pairs.pair" id="pair">
+            <button class="btn btn-default btn-sm" ng-click="getPairsData()">Show</button>
+         </div>
+    </form>
+    <span ng-repeat="p in pairs.pairs">
+        <span class="label label-default">
+            {{ p }} | <a ng-click="removePair(p)">X</a>
+        </span>&nbsp; 
+    </span>
+    <nvd3-line-chart
+        data="pairs.data"
+        width="1200"
+        height="500"
+        showXAxis="true"
+        showYAxis="true"
+        x="xFunction()"
+        y="yFunction()"
+        forcey="[0,0.5]"
+        objectEquality="true"
+        isArea="false"
+        color="colorFunction()"
+        legendColor="colorFunction()"
+        showLegend="true">
+            <svg class="remove-height"></svg>
+    </nvd3-line-chart>
+
+    <h1>Per subgenre</h1>
+    <div ng-repeat="(pair, data) in pairs.genreData">
+        <h2>{{ pair }}</h2>
+        <nvd3-line-chart
+            id="subgenreTimeChart-{{ pair | clean}}"
+            data="data"
+            width="1200"
+            height="500"
+            showXAxis="true"
+            showYAxis="true"
+            x="xFunction()"
+            y="yFunction()"
+            forcey="[0,0.5]"
+            objectEquality="true"
+            isArea="false"
+            color="colorFunction()"
+            legendColor="colorFunction()"
+            showLegend="true">
+                <svg class="remove-height"></svg>
+        </nvd3-line-chart>
+    </div>
+</div>
