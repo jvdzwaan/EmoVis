@@ -185,6 +185,7 @@ def entity_words(request):
     ew_genre = {}
     ew_genre_year = {}
     num_texts = 0
+    num_entities = 50
 
     for cat in categories:
         print cat
@@ -219,7 +220,7 @@ def entity_words(request):
                         "entity": {
                             "terms": {
                                 "field": "liwc-entities.data.{}".format(cat),
-                                "size": 25
+                                "size": num_entities
                             }
                         },
                         "texts": {
@@ -239,7 +240,7 @@ def entity_words(request):
                         "entity": {
                             "terms": {
                                 "field": "liwc-entities.data.{}".format(cat),
-                                "size": 25
+                                "size": num_entities
                             }
                         },
                         "texts": {
@@ -270,7 +271,7 @@ def entity_words(request):
                                     "terms": {
                                         "field": "liwc-entities.data.{}"
                                                  .format(cat),
-                                        "size": 25,
+                                        "size": num_entities,
                                     }
                                 },
                                 "texts": {
