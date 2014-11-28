@@ -88,7 +88,7 @@ embEmApp.controller('EntitiesCtrl', function ($scope, $route, $routeParams, $loc
     }
 });
 
-embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $location, $http){
+embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $location, $http, es){
 
     $scope.$watch('mainCat', function() {
         $scope.getEntityStatisticsCorpus();
@@ -117,7 +117,65 @@ embEmApp.controller('CorpusCtrl', function ($scope, $route, $routeParams, $locat
                 console.log($scope.subgenreTimeData);
             });
     }
- 
+
+    $scope.getScatterDataCorpus = function(cat) {
+        var q = {
+            "query": {
+                "match_all": {}
+            },
+            "aggs": {
+                "texts": {
+                    "terms": {
+                        "field": "text_id",
+                        "size": 200
+                    },
+                    "aggs": {
+                        "cat_count": {
+                            "value_count": {
+                                "field": "liwc-entities.data.Posemo"
+                            } 
+                        },
+                        "num_words": {
+                            "sum": {
+                                "field": "num_words"
+                            }
+                        },
+                        "year": {
+                            "terms": {
+                                "field": "year",
+                                "size": 1
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        console.log(q);
+        es.search({
+            index: 'embem',
+            doc_type: 'event',
+            body: q,
+            size: 0
+        }).then(function (response) {
+            $scope.scatterDataCorpus = [{
+                key: "Posemo",
+                values: response.aggregations.texts.buckets
+            }];
+            console.log(response);
+        });
+    }
+    
+    $scope.xFunction2 = function(){
+        return function(d){
+            return parseInt(d.year.buckets[0].key);
+        }
+    };
+    $scope.yFunction2 = function(){
+        return function(d){
+            return d.cat_count.value/d.num_words.value*100;
+        }
+    };
+
 });
 
 embEmApp.controller('TitleCtrl', function ($scope, $routeParams, $http, EmbEmDataService){
