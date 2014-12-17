@@ -20,14 +20,15 @@ class Command(BaseCommand):
             auteurs = [unicode(a) for a in t.auteurs.all()]
             subgenres = [unicode(g) for g in t.subgenres.all()]
 
-            #contains = t.contains.all()
-            #if len(contains) == 1:
-            #    j = contains[0].jaar
-            #else:
-            #    j = t.jaar
+            # get the year of original publication
+            contains = t.contains.all()
+            if len(contains) == 1:
+                j = contains[0].jaar
+            else:
+                j = t.jaar
 
             print "{}\t{}\t{}\t{}\t{}".format(t.ti_id,
-                                              t.jaar,
+                                              j,
                                               ' & '.join(subgenres),
                                               t.titel.encode('utf-8'),
                                               ' & '.join(auteurs)
