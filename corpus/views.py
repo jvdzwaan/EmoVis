@@ -69,6 +69,19 @@ _corpus_ids = ['rotg001lstr03', 'rotg001lstr01', 'ling001apol01',
 
 _trial_annotation_ids = ['feit007patr01', 'hoof002door01', 'vos_002mede03']
 
+_annotation_ids = ['alew001besl01', 'alew001puit01', 'asse001kwak01',
+                   'bidl001nede01', 'bred001moor01', 'bren001goud01',
+                   'bren001scha01', 'cost001teeu01', 'focq001mini02',
+                   'fres003pefr01', 'hare003agon01', 'hoof001achi01',
+                   'hoof001gran01', 'huyd001achi01', 'lang020chph01',
+                   'lijn002vlug01', 'ling001ontd01', 'meij001verl01',
+                   'noms001mich01', 'pels001verw02', 'plui001verl01',
+                   'rivi001jeug01', 'rivi001vero01', 'ross006zing01',
+                   'scha003bela01', 'stee033adag01', 'stee033beon01',
+                   'stee033tham01', 'vinc001pefr02', 'vond001gysb04',
+                   'vond001jose05', 'vond001pala01', 'vos_001kluc04',
+                   'vos_002kluc01', 'weye002holl01']
+
 def index(request):
     corpus = Titel.objects.filter(ti_id__in=_corpus_ids).order_by('titel') \
                   .order_by('jaar')
